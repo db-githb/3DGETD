@@ -457,7 +457,7 @@ class GaussianGenerator(QWidget):
         with open(config_filepath, 'w') as file:
             file.write(yaml_content)
 
-        # Create if JSON file if it doesn't exist
+        # Create JSON file if it doesn't exist
         json_filepath = ns_path + "dataparser_transforms.json"
         if not os.path.exists(json_filepath):
             dataparser_transforms = {
