@@ -36,9 +36,9 @@ class MainWindow(QWidget):
         self.layout.addLayout(self.dirInputLayout)
 
         # Create an Enter button for the user to confirm the directory
-        self.enterButton = QPushButton('Enter', self)
-        self.enterButton.clicked.connect(self.checkDirectoryValidity)
-        self.layout.addWidget(self.enterButton)
+        self.buttonEnter = QPushButton('Enter', self)
+        self.buttonEnter.clicked.connect(self.checkDirectoryValidity)
+        self.layout.addWidget(self.buttonEnter)
 
         # Label to show the selected directory
         self.dirLabel = QLabel('No directory selected', self)
