@@ -36,7 +36,7 @@ class MainWindow(QWidget):
         self.layout.addLayout(self.dirInputLayout)
 
         # Create an Enter button for the user to confirm the directory
-        self.buttonEnter = QPushButton('Create Folder', self)
+        self.buttonEnter = QPushButton('Create Directory', self)
         self.buttonEnter.setEnabled(False)
         self.buttonEnter.clicked.connect(self.checkDirectoryValidity)
         self.layout.addWidget(self.buttonEnter)
@@ -82,7 +82,7 @@ class MainWindow(QWidget):
             self.buttonEnter.setEnabled(True)
             self.buttonCam.setEnabled(False)
             self.buttonGauss.setEnabled(False)
-            #self.dirLabel.setText(f'Selected Directory: ')
+            self.dirLabel.setText('No directory selected')
 
     def checkDirectoryValidity(self):
         # Check if the directory exists and ask the user if they want to create it if it doesn't
