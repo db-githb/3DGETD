@@ -30,6 +30,8 @@ class GaussianGenerator(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.dir_path = None
+
         self.setWindowTitle("3D Gaussian Generator")
 
         # Main layout
@@ -84,6 +86,9 @@ class GaussianGenerator(QWidget):
         self.opacity_entries = []
         self.quats_entries = []
         self.scales_entries = []
+
+    def set_dir_path(self, inDir):
+        self.dir_path = inDir
 
     def browse_path(self):
         folder_selected = QFileDialog.getExistingDirectory(self, "Select Directory")
@@ -219,12 +224,15 @@ class GaussianGenerator(QWidget):
 
         # Create a config.yml file if it does't exist
         config_filepath = ns_path + "config.yml"
-        yaml_content = """
+        path = ns_path
+        data_path = "\n".join("- {dir}".format(dir=i) for i in range(path))
+
+        yaml_content = f"""
         !!python/object:nerfstudio.engine.trainer.TrainerConfig
         _target: !!python/name:nerfstudio.engine.trainer.Trainer ''
         data: null
         experiment_name: unnamed
-        gradient_accumulation_steps: {}
+        gradient_accumulation_steps: {{}}
         load_checkpoint: null
         load_config: null
         load_dir: null
@@ -353,7 +361,7 @@ class GaussianGenerator(QWidget):
               - '0'
               data: !!python/object/apply:pathlib.PosixPath
               - data
-              - test
+              - {data_path}
               depth_unit_scale_factor: 0.001
               depths_path: null
               downscale_factor: 1
