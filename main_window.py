@@ -75,9 +75,11 @@ class MainWindow(QWidget):
         if dir_path and os.path.isdir(dir_path):
             self.buttonCam.setEnabled(True)
             self.buttonGauss.setEnabled(True)
+            self.dirLabel.setText(f'Selected Directory: {dir_path}')
         else:
             self.buttonCam.setEnabled(False)
             self.buttonGauss.setEnabled(False)
+            #self.dirLabel.setText(f'Selected Directory: ')
 
     def checkDirectoryValidity(self):
         # Check if the directory exists and ask the user if they want to create it if it doesn't
@@ -93,9 +95,6 @@ class MainWindow(QWidget):
                     return
             else:
                 return
-        else:
-            self.dirLabel.setText(f'Selected Directory: {dir_path}')
-            return
 
     def show_cam_window(self):
         if self.cam_widget is None:
