@@ -93,6 +93,9 @@ class MainWindow(QWidget):
                     return
             else:
                 return
+        else:
+            self.dirLabel.setText(f'Selected Directory: {dir_path}')
+            return
 
     def show_cam_window(self):
         if self.cam_widget is None:
