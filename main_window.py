@@ -14,6 +14,7 @@ class MainWindow(QWidget):
 
         self.cam_widget = None
         self.gauss_widget = None
+        self.dirPath = None
         
         # Set up the main layout
         self.layout = QVBoxLayout()
@@ -78,11 +79,13 @@ class MainWindow(QWidget):
             self.buttonCam.setEnabled(True)
             self.buttonGauss.setEnabled(True)
             self.dirLabel.setText(f'Selected Directory: {dir_path}')
+            self.dirPath = dir_path
         else:
             self.buttonEnter.setEnabled(True)
             self.buttonCam.setEnabled(False)
             self.buttonGauss.setEnabled(False)
             self.dirLabel.setText('No directory selected')
+            self.dirPath = None
 
     def checkDirectoryValidity(self):
         # Check if the directory exists and ask the user if they want to create it if it doesn't
