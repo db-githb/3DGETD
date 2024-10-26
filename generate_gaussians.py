@@ -29,8 +29,11 @@ features_rest_1 = torch.tensor([[[ 3.7400e-02,  2.9200e-02,  3.2000e-03],
 class GaussianGenerator(QWidget):
     def __init__(self):
         super().__init__()
+    
+    def __init__(self, dirPath=None):
+        super().__init__()
 
-        self.dir_path = None
+        self.dir_path = dirPath
 
         self.setWindowTitle("3D Gaussian Generator")
 

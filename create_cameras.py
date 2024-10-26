@@ -14,6 +14,11 @@ class CreateCameras(QWidget):
     """
     def __init__(self):
         super().__init__()
+    
+    def __init__(self, dirPath=None):
+        super().__init__()
+        
+        self.dir_path = dirPath
         self.setWindowTitle("Create Cameras")
 
         # Main layout

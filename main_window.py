@@ -20,21 +20,23 @@ class MainWindow(QWidget):
         self.layout = QVBoxLayout()
 
         # Create a horizontal layout for the directory input field and button
-        self.dirInputLayout = QHBoxLayout()
+        self.mainWindowLayout = QHBoxLayout()
 
         # Create a line edit for the user to type the directory
-        self.dirLineEdit = QLineEdit(self)
-        self.dirLineEdit.returnPressed.connect(self.checkDirectoryValidity)
-        self.dirLineEdit.textChanged.connect(self.enableOptionButtons)
-        self.dirInputLayout.addWidget(self.dirLineEdit)
+        self.pathEntry = QLineEdit(self)
+        self.pathLabel = QLabel("Select Path:")
+        self.pathEntry.returnPressed.connect(self.checkDirectoryValidity)
+        self.pathEntry.textChanged.connect(self.enableOptionButtons)
+        self.mainWindowLayout.addWidget(self.pathLabel)
+        self.mainWindowLayout.addWidget(self.pathEntry)
 
         # Create a button to open the directory dialog
         self.browseButton = QPushButton('Browse', self)
         self.browseButton.clicked.connect(self.openDirectoryDialog)
-        self.dirInputLayout.addWidget(self.browseButton)
+        self.mainWindowLayout.addWidget(self.browseButton)
 
         # Add the directory input layout to the main layout
-        self.layout.addLayout(self.dirInputLayout)
+        self.layout.addLayout(self.mainWindowLayout)
 
         # Create an Enter button for the user to confirm the directory
         self.buttonEnter = QPushButton('Create Directory', self)
@@ -69,11 +71,11 @@ class MainWindow(QWidget):
 
         if dir_path:
             # Set the directory path in the line edit
-            self.dirLineEdit.setText(dir_path)
+            self.pathEntry.setText(dir_path)
 
     def enableOptionButtons(self):
         # Check if the directory exists
-        dir_path = self.dirLineEdit.text()
+        dir_path = self.pathEntry.text()
         if dir_path and os.path.isdir(dir_path):
             self.buttonEnter.setEnabled(False)
             self.buttonCam.setEnabled(True)
@@ -89,7 +91,7 @@ class MainWindow(QWidget):
 
     def checkDirectoryValidity(self):
         # Check if the directory exists and ask the user if they want to create it if it doesn't
-        dir_path = self.dirLineEdit.text()
+        dir_path = self.pathEntry.text()
         if not dir_path or not os.path.isdir(dir_path):
             reply = QMessageBox.question(self, 'Create Directory', f'The directory "{dir_path}" does not exist. Do you want to create it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
             if reply == QMessageBox.Yes:
