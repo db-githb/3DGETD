@@ -5,7 +5,7 @@ import json
 import numpy as np
 import datetime as dt
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout
+    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout, QMessageBox
 )
 
 # Default custom path
@@ -33,7 +33,10 @@ class GaussianGenerator(QWidget):
     def __init__(self, dirPath=None):
         super().__init__()
 
-        self.dir_path = dirPath
+        # Check if test_models directory exists, if not, create it
+        self.exp_path = dirPath+"/test_models/"
+        if not os.path.exists(self.exp_path ):
+            os.makedirs(self.exp_path )
 
         self.setWindowTitle("3D Gaussian Generator")
 
@@ -42,15 +45,27 @@ class GaussianGenerator(QWidget):
 
         # Path selection
         path_layout = QHBoxLayout()
-        path_label = QLabel("Select Path:")
-        self.path_entry = QLineEdit(default_path)
+        self.exp_label = QLabel("Experiment Name: ")
+        self.exp_dir_entry = QLineEdit(self)
+        self.exp_dir_entry.returnPressed.connect(self.checkDirectoryValidity)
+        self.exp_dir_entry.textChanged.connect(self.enableOptionButtons)
+        path_layout.addWidget(self.exp_label)
+        path_layout.addWidget(self.exp_dir_entry)
+        layout.addLayout(path_layout)
+
         browse_button = QPushButton("Browse")
         browse_button.clicked.connect(self.browse_path)
-
-        path_layout.addWidget(path_label)
-        path_layout.addWidget(self.path_entry)
         path_layout.addWidget(browse_button)
-        layout.addLayout(path_layout)
+
+        # Create an Enter button for the user to confirm the directory
+        self.enter_button = QPushButton('Create Experiment Directory', self)
+        self.enter_button.setEnabled(False)
+        self.enter_button.clicked.connect(self.checkDirectoryValidity)
+        layout.addWidget(self.enter_button)
+
+        # Display full directory path for experiment
+        self.path_label = QLabel(f'Selected Directory: {self.exp_path}')
+        layout.addWidget(self.path_label)
 
         # Number of Gaussians
         num_gaussians_layout = QHBoxLayout()
@@ -90,13 +105,40 @@ class GaussianGenerator(QWidget):
         self.quats_entries = []
         self.scales_entries = []
 
-    def set_dir_path(self, inDir):
-        self.dir_path = inDir
-
     def browse_path(self):
-        folder_selected = QFileDialog.getExistingDirectory(self, "Select Directory")
-        if folder_selected:
-            self.path_entry.setText(folder_selected + "/")
+        full_path = QFileDialog.getExistingDirectory(self, "Select Experiment", self.exp_path)
+        exp_name = os.path.basename(os.path.normpath(full_path))
+        if full_path:
+            self.exp_dir_entry.setText(exp_name + "/")
+
+    def enableOptionButtons(self):
+        # Check if the directory exists
+        exp_dir = self.exp_dir_entry.text()
+        exp_path = self.exp_path+exp_dir
+        if exp_path and os.path.isdir(exp_path):
+            self.enter_button.setEnabled(False)
+            self.path_label.setText(f'Selected Directory: {exp_path}')
+            self.exp_path = exp_path
+        else:
+            self.enter_button.setEnabled(True)
+            self.path_label.setText(f'Selected Directory: {self.exp_path}')
+            self.dirPath = self.exp_path
+
+    def checkDirectoryValidity(self):
+        # Check if the directory exists and ask the user if they want to create it if it doesn't
+        exp_dir = self.exp_dir_entry.text()
+        exp_path = self.exp_path+exp_dir
+        if not exp_path or not os.path.isdir(exp_path):
+            reply = QMessageBox.question(self, 'Create Experiment Path', f'The experiment "{exp_path}" does not exist. Do you want to create it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                try:
+                    os.makedirs(exp_path, exist_ok=True)
+                    self.enableOptionButtons() # Update the state of the option buttons after creating the directory
+                except Exception as e:
+                    QMessageBox.warning(self, 'Invalid Experiment Path', f'Could not create the experiment: {e}')
+                    return
+            else:
+                return
 
     def create_input_fields(self):
         # Clear previous entries if any
@@ -182,7 +224,7 @@ class GaussianGenerator(QWidget):
 
     def update_checkpoint(self):
         # Get user inputs
-        ns_path = self.path_entry.text()
+        ns_path = self.exp_path
         num_gaussians = int(self.num_gaussians_entry.text())
 
         features_dc = []
@@ -228,13 +270,13 @@ class GaussianGenerator(QWidget):
         # Create a config.yml file if it does't exist
         config_filepath = ns_path + "config.yml"
         path = ns_path
-        data_path = "\n".join("- {dir}".format(dir=i) for i in range(path))
+        self.data_path = "DUMMY VALUE" #"\n".join("- {dir}".format(dir=i) for i in range(path))
 
         yaml_content = f"""
         !!python/object:nerfstudio.engine.trainer.TrainerConfig
         _target: !!python/name:nerfstudio.engine.trainer.Trainer ''
         data: null
-        experiment_name: unnamed
+        experiment_name: {self.exp_path}
         gradient_accumulation_steps: {{}}
         load_checkpoint: null
         load_config: null
@@ -344,7 +386,7 @@ class GaussianGenerator(QWidget):
               weight_decay: 0
             scheduler: null
         output_dir: !!python/object/apply:pathlib.PosixPath
-        - outputs
+        - test_models
         pipeline: !!python/object:nerfstudio.pipelines.base_pipeline.VanillaPipelineConfig
           _target: !!python/name:nerfstudio.pipelines.base_pipeline.VanillaPipeline ''
           datamanager: !!python/object:nerfstudio.data.datamanagers.full_images_datamanager.FullImageDatamanagerConfig
@@ -364,7 +406,7 @@ class GaussianGenerator(QWidget):
               - '0'
               data: !!python/object/apply:pathlib.PosixPath
               - data
-              - {data_path}
+              - {self.data_path}
               depth_unit_scale_factor: 0.001
               depths_path: null
               downscale_factor: 1

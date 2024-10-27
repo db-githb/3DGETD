@@ -106,12 +106,12 @@ class MainWindow(QWidget):
 
     def show_cam_window(self):
         if self.cam_widget is None:
-            self.cam_widget = CreateCameras()
+            self.cam_widget = CreateCameras(self.dirPath)
         self.cam_widget.show()
     
     def show_gauss_window(self):
         if self.gauss_widget is None:
-            self.gauss_widget = GaussianGenerator()   
+            self.gauss_widget = GaussianGenerator(self.dirPath)   
         self.gauss_widget.show()
 
 if __name__ == '__main__':
