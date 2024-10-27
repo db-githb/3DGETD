@@ -1,30 +1,34 @@
 import os
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
-def openDirectoryDialog(self):
+def openDirectoryDialog(pathEntry, exPath=None):
     # Open the QFileDialog to select a directory
-    dir_path = QFileDialog.getExistingDirectory(self, 'Select Directory')
-    if dir_path:
+    if exPath == None:
+        dirPath = QFileDialog.getExistingDirectory(None, 'Select Directory')
+    else:
+        dirPath = QFileDialog.getExistingDirectory(None, 'Select Directory', exPath)
+
+    if dirPath:
         # Set the directory path in the line edit
-        self.pathEntry.setText(dir_path)
+        pathEntry.setText(dirPath)
     return
 
-def enableOptionButtons(self):
+def enableOptionButtons(pathEntry, buttonEnter, buttonCam, buttonGauss,dirLabel):
     # Check if the directory exists
-    dir_path = self.pathEntry.text()
+    dir_path = pathEntry.text()
     if dir_path and os.path.isdir(dir_path):
-        self.buttonEnter.setEnabled(False)
-        self.buttonCam.setEnabled(True)
-        self.buttonGauss.setEnabled(True)
-        self.dirLabel.setText(f'Selected Directory: {dir_path}')
-        self.dirPath = dir_path
+        buttonEnter.setEnabled(False)
+        buttonCam.setEnabled(True)
+        buttonGauss.setEnabled(True)
+        dirLabel.setText(f'Selected Directory: {dir_path}')
+        dirPath = dir_path
     else:
-        self.buttonEnter.setEnabled(True)
-        self.buttonCam.setEnabled(False)
-        self.buttonGauss.setEnabled(False)
-        self.dirLabel.setText('No directory selected')
-        self.dirPath = None
-    return
+        buttonEnter.setEnabled(True)
+        buttonCam.setEnabled(False)
+        buttonGauss.setEnabled(False)
+        dirLabel.setText('No directory selected')
+        dirPath = None
+    return dirPath
  
 def checkDirectoryValidity(self):
     # Check if the directory exists and ask the user if they want to create it if it doesn't
