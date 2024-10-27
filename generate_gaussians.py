@@ -33,11 +33,12 @@ class GaussianGenerator(QWidget):
     def __init__(self, dirPath=None):
         super().__init__()
 
+        self.exp_path = dirPath
         # Check if test_models directory exists, if not, create it
-        self.exp_path = dirPath+"/test_models/"
-        if not os.path.exists(self.exp_path ):
-            os.makedirs(self.exp_path )
-
+        if not os.path.basename(os.path.normpath(self.exp_path)):
+            self.exp_path = os.path.join(dirPath, "test_models")
+            os.makedirs(self.exp_path)
+        
         self.setWindowTitle("3D Gaussian Generator")
 
         # Main layout
@@ -54,7 +55,7 @@ class GaussianGenerator(QWidget):
         layout.addLayout(path_layout)
 
         browse_button = QPushButton("Browse")
-        browse_button.clicked.connect(self.browse_path)
+        browse_button.clicked.connect(self.openDirectoryDialog)
         path_layout.addWidget(browse_button)
 
         # Create an Enter button for the user to confirm the directory
@@ -71,12 +72,13 @@ class GaussianGenerator(QWidget):
         num_gaussians_layout = QHBoxLayout()
         num_gaussians_label = QLabel("Number of 3D Gaussians:")
         self.num_gaussians_entry = QLineEdit("2")  # Default to 2 Gaussians
-        generate_button = QPushButton("Create Parameter Fields")
-        generate_button.clicked.connect(self.create_input_fields)
+        self.generate_button = QPushButton("Create Parameter Fields")
+        self.generate_button.setEnabled(False)
+        self.generate_button.clicked.connect(self.create_input_fields)
 
         num_gaussians_layout.addWidget(num_gaussians_label)
         num_gaussians_layout.addWidget(self.num_gaussians_entry)
-        num_gaussians_layout.addWidget(generate_button)
+        num_gaussians_layout.addWidget(self.generate_button)
         layout.addLayout(num_gaussians_layout)
 
         # Scroll area for dynamically generated input fields
@@ -91,9 +93,10 @@ class GaussianGenerator(QWidget):
         layout.addWidget(self.scroll)
 
         # Update button
-        update_button = QPushButton("Generate Gaussians")
-        update_button.clicked.connect(self.update_checkpoint)
-        layout.addWidget(update_button)
+        self.update_button = QPushButton("Generate Gaussians")
+        self.update_button.setEnabled(False)
+        self.update_button.clicked.connect(self.update_checkpoint)
+        layout.addWidget(self.update_button)
 
         # Set the main layout
         self.setLayout(layout)
@@ -105,29 +108,34 @@ class GaussianGenerator(QWidget):
         self.quats_entries = []
         self.scales_entries = []
 
-    def browse_path(self):
-        full_path = QFileDialog.getExistingDirectory(self, "Select Experiment", self.exp_path)
-        exp_name = os.path.basename(os.path.normpath(full_path))
-        if full_path:
-            self.exp_dir_entry.setText(exp_name + "/")
+    def openDirectoryDialog(self):
+        # Open the QFileDialog to select a directory
+        dir_path = QFileDialog.getExistingDirectory(self, "Select Experiment", self.exp_path)
+
+        if dir_path:
+            # Set the directory path in the line edit
+            self.exp_dir_entry.setText(dir_path)
 
     def enableOptionButtons(self):
         # Check if the directory exists
         exp_dir = self.exp_dir_entry.text()
-        exp_path = self.exp_path+exp_dir
+        exp_path = os.path.join(self.exp_path, exp_dir)
         if exp_path and os.path.isdir(exp_path):
             self.enter_button.setEnabled(False)
+            self.generate_button.setEnabled(True)
             self.path_label.setText(f'Selected Directory: {exp_path}')
             self.exp_path = exp_path
         else:
             self.enter_button.setEnabled(True)
+            self.generate_button.setEnabled(False)
+            self.update_button.setEnabled(False)
             self.path_label.setText(f'Selected Directory: {self.exp_path}')
             self.dirPath = self.exp_path
 
     def checkDirectoryValidity(self):
         # Check if the directory exists and ask the user if they want to create it if it doesn't
         exp_dir = self.exp_dir_entry.text()
-        exp_path = self.exp_path+exp_dir
+        exp_path = os.path.join(self.exp_path, exp_dir)
         if not exp_path or not os.path.isdir(exp_path):
             reply = QMessageBox.question(self, 'Create Experiment Path', f'The experiment "{exp_path}" does not exist. Do you want to create it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
             if reply == QMessageBox.Yes:
@@ -220,7 +228,8 @@ class GaussianGenerator(QWidget):
             # self.gaussian_layout.addWidget(QLabel("Note: e^(scale)"), row_offset + 5, 4)
             self.scales_entries.append([s1, s2, s3])
 
-        self.adjustSize() 
+        self.adjustSize()
+        self.update_button.setEnabled(True)
 
     def update_checkpoint(self):
         # Get user inputs
