@@ -1,46 +1,45 @@
 import os
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
-def openDirectoryDialog(pathEntry, exPath=None):
+def openDirectoryDialog(parent):
     # Open the QFileDialog to select a directory
-    if exPath == None:
+    if parent.exPath == None:
         dirPath = QFileDialog.getExistingDirectory(None, 'Select Directory')
     else:
-        dirPath = QFileDialog.getExistingDirectory(None, 'Select Directory', exPath)
+        dirPath = QFileDialog.getExistingDirectory(None, 'Select Directory', parent.exPath)
 
     if dirPath:
         # Set the directory path in the line edit
-        pathEntry.setText(dirPath)
+        parent.pathEntry.setText(dirPath)
     return
 
-def enableOptionButtons(pathEntry, buttonEnter, buttonCam, buttonGauss,dirLabel):
+def toggleButtons(parent):
     # Check if the directory exists
-    dir_path = pathEntry.text()
+    dir_path = parent.pathEntry.text()
     if dir_path and os.path.isdir(dir_path):
-        buttonEnter.setEnabled(False)
-        buttonCam.setEnabled(True)
-        buttonGauss.setEnabled(True)
-        dirLabel.setText(f'Selected Directory: {dir_path}')
-        dirPath = dir_path
+        parent.buttonEnter.setEnabled(False)
+        parent.buttonCam.setEnabled(True)
+        parent.buttonGauss.setEnabled(True)
+        parent.dirLabel.setText(f'Selected Directory: {dir_path}')
+        parent.dirPath = dir_path
     else:
-        buttonEnter.setEnabled(True)
-        buttonCam.setEnabled(False)
-        buttonGauss.setEnabled(False)
-        dirLabel.setText('No directory selected')
-        dirPath = None
-    return dirPath
+        parent.buttonEnter.setEnabled(True)
+        parent.buttonCam.setEnabled(False)
+        parent.buttonGauss.setEnabled(False)
+        parent.dirLabel.setText('No directory selected')
+        parent.dirPath = None
  
-def checkDirectoryValidity(self):
+def checkDirectoryValidity(parent):
     # Check if the directory exists and ask the user if they want to create it if it doesn't
-    dir_path = self.pathEntry.text()
+    dir_path = parent.pathEntry.text()
     if not dir_path or not os.path.isdir(dir_path):
-        reply = QMessageBox.question(self, 'Create Directory', f'The directory "{dir_path}" does not exist. Do you want to create it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        reply = QMessageBox.question(parent, 'Create Directory', f'The directory "{dir_path}" does not exist. Do you want to create it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             try:
                 os.makedirs(dir_path, exist_ok=True)
-                self.enableOptionButtons() # Update the state of the option buttons after creating the directory
+                toggleButtons(parent) # Update the state of the option buttons after creating the directory
             except Exception as e:
-                QMessageBox.warning(self, 'Invalid Directory', f'Could not create the directory: {e}')
+                QMessageBox.warning(parent, 'Invalid Directory', f'Could not create the directory: {e}')
                 return
         else:
             return
