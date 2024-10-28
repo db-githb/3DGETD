@@ -15,8 +15,7 @@ class MainWindow(QWidget):
         self.widgetCam = None
         self.widgetGauss = None
         self.pathDir = None
-        self.pathExp = None # Not used in main window
-        
+
         # Set up the main layout
         self.layout = QVBoxLayout()
 

@@ -34,13 +34,12 @@ class GaussianGenerator(QWidget):
     def __init__(self, pathDir=None):
         super().__init__()
 
-        self.buttonCam = None
-
-        self.pathExp = pathDir
+        self.pathInit = pathDir
         # Check if test_models directory exists, if not, create it
-        if os.path.basename(os.path.normpath(self.pathExp)) != "test_models":
-            self.pathExp = os.path.join(pathDir, "test_models")
-            os.makedirs(self.pathExp)
+        if os.path.basename(os.path.normpath(self.pathInit)) != "test_models":
+            self.pathInit = os.path.join(pathDir, "test_models")
+            if not os.path.exists(self.pathInit):
+              os.makedirs(self.pathInit)
 
         # Main layout
         self.layout = QVBoxLayout()
@@ -50,7 +49,7 @@ class GaussianGenerator(QWidget):
         self.exp_label = QLabel("Experiment Name: ")
         self.pathEntry = QLineEdit(self)
         self.pathEntry.returnPressed.connect(lambda: checkDirectoryValidity(self))
-        self.pathEntry.textChanged.connect(self.enableOptionButtons)
+        self.pathEntry.textChanged.connect(lambda: toggleButtons(self))
         self.pathLayout.addWidget(self.exp_label)
         self.pathLayout.addWidget(self.pathEntry)
         self.layout.addLayout(self.pathLayout)
@@ -62,11 +61,11 @@ class GaussianGenerator(QWidget):
         # Create an Enter button for the user to confirm the directory
         self.buttonEnter = QPushButton('Create Experiment Directory', self)
         self.buttonEnter.setEnabled(False)
-        self.buttonEnter.clicked.connect(self.checkDirectoryValidity)
+        self.buttonEnter.clicked.connect(lambda: checkDirectoryValidity(self))
         self.layout.addWidget(self.buttonEnter)
 
         # Display full directory path for experiment
-        self.pathLabel = QLabel(f'Selected Directory: {self.pathExp}')
+        self.pathLabel = QLabel(f'Selected Directory: {self.pathEntry.text()}')
         self.layout.addWidget(self.pathLabel)
 
         # Number of Gaussians
@@ -109,46 +108,6 @@ class GaussianGenerator(QWidget):
         self.opacity_entries = []
         self.quats_entries = []
         self.scales_entries = []
-
-    def openDirectoryDialog(self):
-        # Open the QFileDialog to select a directory
-        dir_path = QFileDialog.getExistingDirectory(self, "Select Experiment", self.pathExp)
-
-        if dir_path:
-            # Set the directory path in the line edit
-            self.pathEntry.setText(dir_path)
-
-    def enableOptionButtons(self):
-        # Check if the directory exists
-        exp_dir = self.pathEntry.text()
-        exp_path = os.path.join(self.pathExp, exp_dir)
-        if exp_path and os.path.isdir(exp_path):
-            self.buttonEnter.setEnabled(False)
-            self.buttonParams.setEnabled(True)
-            self.pathLabel.setText(f'Selected Directory: {exp_path}')
-            self.pathExp = exp_path
-        else:
-            self.buttonEnter.setEnabled(True)
-            self.buttonParams.setEnabled(False)
-            self.buttonGauss.setEnabled(False)
-            self.pathLabel.setText(f'Selected Directory: {self.pathExp}')
-            self.dirPath = self.pathExp
-
-    def checkDirectoryValidity(self):
-        # Check if the directory exists and ask the user if they want to create it if it doesn't
-        exp_dir = self.pathEntry.text()
-        exp_path = os.path.join(self.pathExp, exp_dir)
-        if not exp_path or not os.path.isdir(exp_path):
-            reply = QMessageBox.question(self, 'Create Experiment Path', f'The experiment "{exp_path}" does not exist. Do you want to create it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-            if reply == QMessageBox.Yes:
-                try:
-                    os.makedirs(exp_path, exist_ok=True)
-                    self.enableOptionButtons() # Update the state of the option buttons after creating the directory
-                except Exception as e:
-                    QMessageBox.warning(self, 'Invalid Experiment Path', f'Could not create the experiment: {e}')
-                    return
-            else:
-                return
 
     def create_input_fields(self):
         # Clear previous entries if any
@@ -235,7 +194,6 @@ class GaussianGenerator(QWidget):
 
     def update_checkpoint(self):
         # Get user inputs
-        ns_path = self.pathExp
         num_gaussians = int(self.num_gaussians_entry.text())
 
         features_dc = []
@@ -273,21 +231,16 @@ class GaussianGenerator(QWidget):
                 float(self.scales_entries[i][2].text())
             ])
 
-        # Check if file path exists, if it doesn't create it
-        if not ns_path.endswith('/'):
-            ns_path = ns_path + "/"
-        os.makedirs(ns_path, exist_ok=True)
-
         # Create a config.yml file if it does't exist
-        config_filepath = ns_path + "config.yml"
-        path = ns_path
+        config_filepath = self.pathEntry.text() + "/config.yml"
+        experiment_name = os.path.basename(os.path.normpath(self.pathEntry.text())) 
         self.data_path = "DUMMY VALUE" #"\n".join("- {dir}".format(dir=i) for i in range(path))
 
         yaml_content = f"""
         !!python/object:nerfstudio.engine.trainer.TrainerConfig
         _target: !!python/name:nerfstudio.engine.trainer.Trainer ''
         data: null
-        experiment_name: {self.pathExp}
+        experiment_name: {experiment_name}
         gradient_accumulation_steps: {{}}
         load_checkpoint: null
         load_config: null
@@ -522,7 +475,7 @@ class GaussianGenerator(QWidget):
             file.write(yaml_content)
 
         # Create JSON file if it doesn't exist
-        json_filepath = ns_path + "dataparser_transforms.json"
+        json_filepath = self.pathEntry.text() + "/dataparser_transforms.json"
         if not os.path.exists(json_filepath):
             dataparser_transforms = {
                 "transform": [ [1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, -1.0, 0.0, 0.0] ],
@@ -532,10 +485,10 @@ class GaussianGenerator(QWidget):
                 json.dump(dataparser_transforms, json_file, indent=4)  # indent=4 for pretty-printing
 
         # Check if parent directory for checkpoint exists, if it doesn't create it
-        os.makedirs(ns_path + "nerfstudio_models/", exist_ok=True)
+        os.makedirs(self.pathEntry.text() + "/nerfstudio_models/", exist_ok=True)
 
         # Check if the checkpoint file exists
-        checkpoint_file = ns_path + "nerfstudio_models/step-000029999.ckpt"
+        checkpoint_file = self.pathEntry.text() + "/nerfstudio_models/step-000029999.ckpt"
         if os.path.exists(checkpoint_file):
             # Load existing checkpoint
             checkpoint = torch.load(checkpoint_file)
