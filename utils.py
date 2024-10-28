@@ -3,10 +3,10 @@ from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
 def openDirectoryDialog(parent):
     # Open the QFileDialog to select a directory
-    if parent.exPath == None:
+    if parent.pathExp == None:
         dirPath = QFileDialog.getExistingDirectory(None, 'Select Directory')
     else:
-        dirPath = QFileDialog.getExistingDirectory(None, 'Select Directory', parent.exPath)
+        dirPath = QFileDialog.getExistingDirectory(None, 'Select Directory', parent.pathExp)
 
     if dirPath:
         # Set the directory path in the line edit
@@ -17,17 +17,17 @@ def toggleButtons(parent):
     # Check if the directory exists
     dir_path = parent.pathEntry.text()
     if dir_path and os.path.isdir(dir_path):
-        parent.buttonEnter.setEnabled(False)
-        parent.buttonCam.setEnabled(True)
-        parent.buttonGauss.setEnabled(True)
-        parent.dirLabel.setText(f'Selected Directory: {dir_path}')
-        parent.dirPath = dir_path
+        parent.buttonEnter.setEnabled(False) if parent.buttonEnter else None
+        parent.buttonCam.setEnabled(True) if parent.buttonCam else None
+        parent.buttonGauss.setEnabled(True) if parent.buttonGauss else None
+        parent.labelDir.setText(f'Selected Directory: {dir_path}')
+        parent.pathDir = dir_path
     else:
-        parent.buttonEnter.setEnabled(True)
-        parent.buttonCam.setEnabled(False)
-        parent.buttonGauss.setEnabled(False)
-        parent.dirLabel.setText('No directory selected')
-        parent.dirPath = None
+        parent.buttonEnter.setEnabled(True) if parent.buttonEnter else None
+        parent.buttonCam.setEnabled(False) if parent.buttonCam else None
+        parent.buttonGauss.setEnabled(False) if parent.buttonGauss else None
+        parent.labelDir.setText('No directory selected')
+        parent.labelDir = None
  
 def checkDirectoryValidity(parent):
     # Check if the directory exists and ask the user if they want to create it if it doesn't

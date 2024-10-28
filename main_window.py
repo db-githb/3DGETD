@@ -12,10 +12,10 @@ class MainWindow(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.cam_widget = None
-        self.gauss_widget = None
-        self.dirPath = None
-        self.exPath = None # Not used in main window
+        self.widgetCam = None
+        self.widgetGauss = None
+        self.pathDir = None
+        self.pathExp = None # Not used in main window
         
         # Set up the main layout
         self.layout = QVBoxLayout()
@@ -46,8 +46,8 @@ class MainWindow(QWidget):
         self.layout.addWidget(self.buttonEnter)
 
         # Label to show the selected directory
-        self.dirLabel = QLabel('No directory selected', self)
-        self.layout.addWidget(self.dirLabel)
+        self.labelDir = QLabel('No directory selected', self)
+        self.layout.addWidget(self.labelDir)
 
         # Option buttons (initially disabled)
         self.buttonCam = QPushButton('Create Cameras', self)
@@ -67,14 +67,14 @@ class MainWindow(QWidget):
         self.setWindowTitle("3D Gaussian Generator")
 
     def show_cam_window(self):
-        if self.cam_widget is None:
-            self.cam_widget = CreateCameras(self.dirPath)
-        self.cam_widget.show()
+        if self.widgetCam is None:
+            self.widgetCam = CreateCameras(self.pathDir)
+        self.widgetCam.show()
     
     def show_gauss_window(self):
-        if self.gauss_widget is None:
-            self.gauss_widget = GaussianGenerator(self.dirPath)   
-        self.gauss_widget.show()
+        if self.widgetGauss is None:
+            self.widgetGauss = GaussianGenerator(self.pathDir)   
+        self.widgetGauss.show()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
