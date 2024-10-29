@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout, QMessageBox
 )
 
-from utils import openDirectoryDialog, toggleButtons, checkDirectoryValidity
+from utils import CustomLineEdit, openDirectoryDialog, toggleButtons, checkDirectoryValidity
 
 # Default custom path
 default_path = "/home/damian/projects/nerfstudio/outputs/unnamed/splatfacto/_unit_test/" # "/your/default/path/"  # Replace this with your actual default path
@@ -50,9 +50,10 @@ class GaussianGenerator(QWidget):
         # Path selection
         self.pathLayout = QHBoxLayout()
         self.labelExp = QLabel("Experiment Name: ")
-        self.pathDir = QLineEdit(self)
+        self.pathDir = CustomLineEdit(self)
+        self.pathDir.setWindow(self)
         self.pathDir.returnPressed.connect(lambda: checkDirectoryValidity(self))
-        self.pathDir.textChanged.connect(lambda: toggleButtons(self))
+        #self.pathDir.keyPressEvent.connect(lambda: toggleButtons(self))
         self.pathLayout.addWidget(self.labelExp)
         self.pathLayout.addWidget(self.pathDir)
         self.layout.addLayout(self.pathLayout)

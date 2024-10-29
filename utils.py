@@ -1,15 +1,38 @@
 import os
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QKeyEvent
+from PyQt5.QtWidgets import QFileDialog, QMessageBox, QLineEdit
 
-def completePath(parent):
+class CustomLineEdit(QLineEdit):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.parent = None  # This will be set to the main window instance later
+
+    def setWindow(self, window):
+        self.parent = window
+
+    def keyPressEvent(self, event):
+        # Call the parent class keyPressEvent to retain default behavior
+        super().keyPressEvent(event)
+        toggleButtons(self.parent, event)
+
+def completePath(parent, event=None):
+    # pathEntry maintains root project path
+    dirPath = parent.pathEntry.text()
     if hasattr(parent, "pathDir"):
         # add subfolder to root project path
-        dir_path = os.path.join(parent.pathEntry.text(), parent.pathDir.text(), )
-        parent.pathEntry.setText(dir_path)
-    else:
-        # pathEntry maintains root project path
-        dir_path = parent.pathEntry.text()
-    return dir_path
+        if event != None and event.key() != Qt.Key_Backspace:
+            dirPath = os.path.join(parent.pathEntry.text(), parent.pathDir.text())
+            parent.pathEntry.setText(dirPath)
+            parent.labelPath.setText(f'Selected Directory: {dirPath}')
+        else:
+            partsPath = dirPath.split(os.sep)
+            index = index = partsPath.index("test_models")
+            dirPath = os.sep.join(partsPath[:index + 1])+"/"+parent.pathDir.text()
+            parent.pathEntry.setText(dirPath)
+            parent.labelPath.setText(f'Selected Directory: {dirPath}')
+            
+    return dirPath
 
 def openDirectoryDialog(parent):
     # Open the QFileDialog to select a directory
@@ -17,21 +40,23 @@ def openDirectoryDialog(parent):
         # Open to specfic path
         dirPath = QFileDialog.getExistingDirectory(None, 'Select Directory', parent.pathEntry.text())
         parent.pathDir.setText(os.path.basename(os.path.normpath(dirPath)))
+        toggleButtons(parent)
     else:
         dirPath = QFileDialog.getExistingDirectory(None, 'Select Directory')
 
     # Set the directory path in the line edit
     parent.pathEntry.setText(dirPath)
 
-def toggleButtons(parent):
-    # Check if the directory exists
-    dir_path = completePath(parent)
-    if dir_path and os.path.isdir(dir_path):
+def toggleButtons(parent, event=None):
+        
+    dirPath = completePath(parent, event)
+
+    if dirPath and os.path.isdir(dirPath):
         if hasattr(parent, "buttonEnter"): parent.buttonEnter.setEnabled(False)
         if hasattr(parent, "buttonCam"): parent.buttonCam.setEnabled(True)
         if hasattr(parent, "buttonGauss"): parent.buttonGauss.setEnabled(True)
         if hasattr(parent, "buttonParams"): parent.buttonParams.setEnabled(True)
-        if hasattr(parent, "labelPath"): parent.labelPath.setText(f'Selected Directory: {dir_path}')
+        if hasattr(parent, "labelPath"): parent.labelPath.setText(f'Selected Directory: {dirPath}')
     else:
         if hasattr(parent, "buttonEnter"): parent.buttonEnter.setEnabled(True)
         if hasattr(parent, "buttonCam"): parent.buttonCam.setEnabled(False)
@@ -41,7 +66,7 @@ def toggleButtons(parent):
             parent.labelPath.setText('No directory selected')
         # Clear base of path address as user types to prevent each letter being
         # added to pathEntry when program returns to completePath
-        if hasattr(parent, "pathDir"):  parent.pathEntry.setText(os.path.split(dir_path)[0])
+        if hasattr(parent, "pathDir"):  parent.pathEntry.setText(os.path.split(dirPath)[0])
 
  
 def checkDirectoryValidity(parent):
