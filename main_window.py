@@ -14,7 +14,6 @@ class MainWindow(QWidget):
     def initUI(self):
         self.widgetCam = None
         self.widgetGauss = None
-        self.pathDir = None
 
         # Set up the main layout
         self.layout = QVBoxLayout()
@@ -45,8 +44,8 @@ class MainWindow(QWidget):
         self.layout.addWidget(self.buttonEnter)
 
         # Label to show the selected directory
-        self.labelDir = QLabel('No directory selected', self)
-        self.layout.addWidget(self.labelDir)
+        self.labelPath = QLabel('No directory selected', self)
+        self.layout.addWidget(self.labelPath)
 
         # Option buttons (initially disabled)
         self.buttonCam = QPushButton('Create Cameras', self)
@@ -67,12 +66,12 @@ class MainWindow(QWidget):
 
     def show_cam_window(self):
         if self.widgetCam is None:
-            self.widgetCam = CreateCameras(self.pathDir)
+            self.widgetCam = CreateCameras(self.pathEntry)
         self.widgetCam.show()
     
     def show_gauss_window(self):
         if self.widgetGauss is None:
-            self.widgetGauss = GaussianGenerator(self.pathDir)   
+            self.widgetGauss = GaussianGenerator(self.pathEntry)   
         self.widgetGauss.show()
 
 if __name__ == '__main__':

@@ -31,29 +31,33 @@ class GaussianGenerator(QWidget):
     def __init__(self):
         super().__init__()
     
-    def __init__(self, pathDir=None):
+    def __init__(self, inPath=None):
         super().__init__()
 
-        self.pathInit = pathDir
+        path = inPath.text()
+        self.pathEntry = QLineEdit()
+        self.pathEntry.setText(path)
         # Check if test_models directory exists, if not, create it
-        if os.path.basename(os.path.normpath(self.pathInit)) != "test_models":
-            self.pathInit = os.path.join(pathDir, "test_models")
-            if not os.path.exists(self.pathInit):
-              os.makedirs(self.pathInit)
+        if os.path.basename(os.path.normpath(path)) != "test_models":
+            pathGG = os.path.join(path, "test_models")
+            self.pathEntry.setText(pathGG)
+            if not os.path.exists(pathGG):
+              os.makedirs(pathGG)
 
         # Main layout
         self.layout = QVBoxLayout()
 
         # Path selection
         self.pathLayout = QHBoxLayout()
-        self.exp_label = QLabel("Experiment Name: ")
-        self.pathEntry = QLineEdit(self)
-        self.pathEntry.returnPressed.connect(lambda: checkDirectoryValidity(self))
-        self.pathEntry.textChanged.connect(lambda: toggleButtons(self))
-        self.pathLayout.addWidget(self.exp_label)
-        self.pathLayout.addWidget(self.pathEntry)
+        self.labelExp = QLabel("Experiment Name: ")
+        self.pathDir = QLineEdit(self)
+        self.pathDir.returnPressed.connect(lambda: checkDirectoryValidity(self))
+        self.pathDir.textChanged.connect(lambda: toggleButtons(self))
+        self.pathLayout.addWidget(self.labelExp)
+        self.pathLayout.addWidget(self.pathDir)
         self.layout.addLayout(self.pathLayout)
 
+        # Create a button to open the directory dialogpath
         self.buttonBrowse = QPushButton("Browse")
         self.buttonBrowse.clicked.connect(lambda: openDirectoryDialog(self))
         self.pathLayout.addWidget(self.buttonBrowse)
@@ -65,8 +69,8 @@ class GaussianGenerator(QWidget):
         self.layout.addWidget(self.buttonEnter)
 
         # Display full directory path for experiment
-        self.pathLabel = QLabel(f'Selected Directory: {self.pathEntry.text()}')
-        self.layout.addWidget(self.pathLabel)
+        self.labelPath = QLabel(f'Selected Directory: {self.pathEntry.text()}')
+        self.layout.addWidget(self.labelPath)
 
         # Number of Gaussians
         num_gaussians_layout = QHBoxLayout()
@@ -233,14 +237,13 @@ class GaussianGenerator(QWidget):
 
         # Create a config.yml file if it does't exist
         config_filepath = self.pathEntry.text() + "/config.yml"
-        experiment_name = os.path.basename(os.path.normpath(self.pathEntry.text())) 
         self.data_path = "DUMMY VALUE" #"\n".join("- {dir}".format(dir=i) for i in range(path))
 
         yaml_content = f"""
         !!python/object:nerfstudio.engine.trainer.TrainerConfig
         _target: !!python/name:nerfstudio.engine.trainer.Trainer ''
         data: null
-        experiment_name: {experiment_name}
+        experiment_name: {self.pathDir.text()}
         gradient_accumulation_steps: {{}}
         load_checkpoint: null
         load_config: null
