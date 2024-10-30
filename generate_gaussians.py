@@ -4,10 +4,10 @@ import torch
 import json
 import datetime as dt
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout, QMessageBox
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout
 )
 
-from utils import CamLineEdit, userInputLayout, toggleButtons
+from utils import userInputLayout, toggleButtons
 
 features_rest_1 = torch.tensor([[[ 3.7400e-02,  2.9200e-02,  3.2000e-03],
                               [ 1.0500e-02, -1.3500e-02, -1.2000e-02],
@@ -69,9 +69,8 @@ class GaussianGenerator(QWidget):
         # Path selection
         self.pathCamLayout = QHBoxLayout()
         self.labelCamDir = QLabel("Select Cameras: ")
-        self.pathCamDir = CamLineEdit(self)
-        self.pathCamDir.setWindow(self)
-        #self.pathCamDir.textChanged.connect(lambda: self.checkCamDirValidity())
+        self.pathCamDir = QLineEdit(self)
+        self.pathCamDir.textChanged.connect(lambda: self.checkCamDirValidity())
         self.pathCamLayout.addWidget(self.labelCamDir)
         self.pathCamLayout.addWidget(self.pathCamDir)
         self.layout.addLayout(self.pathCamLayout)
@@ -103,9 +102,19 @@ class GaussianGenerator(QWidget):
       # Open the QFileDialog to data director
       dirPath = QFileDialog.getExistingDirectory(None, 'Select Directory', self.pathCamRoot)
       self.pathCamDir.setText(os.path.basename(os.path.normpath(dirPath)))
+    
+    def checkCamDirValidity(self):
+        # Check if the directory exists and ask the user if they want to create it if it doesn't
+        camDir = self.pathCamDir.text()
+        fullCamPath = os.path.join(self.pathCamRoot, camDir)
+        if os.path.isdir(fullCamPath) and camDir != "":
+            self.statusCam = True
+            toggleButtons(self)
+        else:
+            self.statusCam = False
+            toggleButtons(self)
 
     def create_input_fields(self):
-
         # Clear previous entries if any
         for i in reversed(range(self.gaussian_layout.count())):
             widget_to_remove = self.gaussian_layout.itemAt(i).widget()
