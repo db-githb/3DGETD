@@ -79,6 +79,7 @@ class GaussianGenerator(QWidget):
         self.buttonParams = QPushButton("Create Parameter Fields")
         self.buttonParams.setEnabled(False)
         self.buttonParams.clicked.connect(self.create_input_fields)
+        self.statusBP = False
 
         num_gaussians_layout.addWidget(num_gaussians_label)
         num_gaussians_layout.addWidget(self.num_gaussians_entry)
@@ -114,6 +115,9 @@ class GaussianGenerator(QWidget):
         self.scales_entries = []
 
     def create_input_fields(self):
+        # set buttonParam status
+        self.statusBP = True
+        
         # Clear previous entries if any
         for i in reversed(range(self.gaussian_layout.count())):
             widget_to_remove = self.gaussian_layout.itemAt(i).widget()

@@ -52,11 +52,12 @@ def openDirectoryDialog(parent):
 def toggleButtons(parent, event=None):
         
     dirPath = completePath(parent, event)
+    statusBG = parent.statusBP if hasattr(parent, "pathDir") else True
 
     if dirPath and os.path.isdir(dirPath) and os.path.basename(dirPath) != "":
         if hasattr(parent, "buttonEnter"): parent.buttonEnter.setEnabled(False)
         if hasattr(parent, "buttonCam"): parent.buttonCam.setEnabled(True)
-        if hasattr(parent, "buttonGauss"): parent.buttonGauss.setEnabled(True)
+        if hasattr(parent, "buttonGauss"): parent.buttonGauss.setEnabled(statusBG)
         if hasattr(parent, "buttonParams"): parent.buttonParams.setEnabled(True)
         if hasattr(parent, "labelPath"): parent.labelPath.setText(f'Selected Directory: {dirPath}')
     else:
@@ -69,6 +70,8 @@ def toggleButtons(parent, event=None):
         # Clear base of path address as user types to prevent each letter being
         # added to pathEntry when program returns to completePath
         if hasattr(parent, "pathDir"): parent.pathEntry.setText(os.path.split(dirPath)[0])
+        # reset buttonParam status
+        if hasattr(parent, "statusBP"): parent.statusBP = False
 
  
 def checkDirectoryValidity(parent):
