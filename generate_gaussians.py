@@ -53,7 +53,6 @@ class GaussianGenerator(QWidget):
         self.pathDir = CustomLineEdit(self)
         self.pathDir.setWindow(self)
         self.pathDir.returnPressed.connect(lambda: checkDirectoryValidity(self))
-        #self.pathDir.keyPressEvent.connect(lambda: toggleButtons(self))
         self.pathLayout.addWidget(self.labelExp)
         self.pathLayout.addWidget(self.pathDir)
         self.layout.addLayout(self.pathLayout)

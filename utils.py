@@ -19,15 +19,17 @@ class CustomLineEdit(QLineEdit):
 def completePath(parent, event=None):
     # pathEntry maintains root project path
     dirPath = parent.pathEntry.text()
-    if hasattr(parent, "pathDir"):
+    if hasattr(parent, "pathDir"): # non-main_windows have pathDir attributes
         # add subfolder to root project path
         if event != None and event.key() != Qt.Key_Backspace:
+            # add user input to root project path
             dirPath = os.path.join(parent.pathEntry.text(), parent.pathDir.text())
-            parent.pathEntry.setText(dirPath)
-            parent.labelPath.setText(f'Selected Directory: {dirPath}')
+            parent.pathEntry.setText(dirPath) # display folder name
+            parent.labelPath.setText(f'Selected Directory: {dirPath}') # full display project path
         else:
+            # ensure experiment folder is under test_models, otherwise when backspace is invoked it could create sub folders for every sub string when backspacing
             partsPath = dirPath.split(os.sep)
-            index = index = partsPath.index("test_models")
+            index = partsPath.index("test_models")
             dirPath = os.sep.join(partsPath[:index + 1])+"/"+parent.pathDir.text()
             parent.pathEntry.setText(dirPath)
             parent.labelPath.setText(f'Selected Directory: {dirPath}')
@@ -51,7 +53,7 @@ def toggleButtons(parent, event=None):
         
     dirPath = completePath(parent, event)
 
-    if dirPath and os.path.isdir(dirPath):
+    if dirPath and os.path.isdir(dirPath) and os.path.basename(dirPath) != "":
         if hasattr(parent, "buttonEnter"): parent.buttonEnter.setEnabled(False)
         if hasattr(parent, "buttonCam"): parent.buttonCam.setEnabled(True)
         if hasattr(parent, "buttonGauss"): parent.buttonGauss.setEnabled(True)
@@ -66,7 +68,7 @@ def toggleButtons(parent, event=None):
             parent.labelPath.setText('No directory selected')
         # Clear base of path address as user types to prevent each letter being
         # added to pathEntry when program returns to completePath
-        if hasattr(parent, "pathDir"):  parent.pathEntry.setText(os.path.split(dirPath)[0])
+        if hasattr(parent, "pathDir"): parent.pathEntry.setText(os.path.split(dirPath)[0])
 
  
 def checkDirectoryValidity(parent):
