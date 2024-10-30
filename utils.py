@@ -18,6 +18,34 @@ class CustomLineEdit(QLineEdit):
         super().keyPressEvent(event)
         toggleButtons(self.parent, event)
 
+class CamLineEdit(QLineEdit):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.parent = None  # This will be set to the main window instance later
+
+    def setWindow(self, window):
+        self.parent = window
+
+    def keyPressEvent(self, event):
+        # Call the parent class keyPressEvent to retain default behavior
+        super().keyPressEvent(event)
+        self.checkCamDirValidity(event)
+    
+    def textChanged(self):
+        self.checkCamDirValidity()
+
+    def checkCamDirValidity(self, event=None):
+        # Check if the directory exists and ask the user if they want to create it if it doesn't
+        camDir = self.parent.pathCamDir.text()
+        fullCamPath = os.path.join(self.parent.pathCamRoot, camDir)
+        if os.path.isdir(fullCamPath) and camDir != "":
+            self.parent.statusCam = True
+            toggleButtons(self.parent)
+        else:
+            self.parent.statusCam = False
+            toggleButtons(self.parent)
+
+
 def userInputLayout(parent, inPath):
     name = parent.name
     path = inPath.text()

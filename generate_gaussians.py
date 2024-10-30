@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout, QMessageBox
 )
 
-from utils import subDirDict, CustomLineEdit, userInputLayout, openDirectoryDialog, checkDirectoryValidity
+from utils import CamLineEdit, userInputLayout, toggleButtons
 
 features_rest_1 = torch.tensor([[[ 3.7400e-02,  2.9200e-02,  3.2000e-03],
                               [ 1.0500e-02, -1.3500e-02, -1.2000e-02],
@@ -32,9 +32,11 @@ class GaussianGenerator(QWidget):
     def __init__(self, inPath=None):
         super().__init__()
 
+        self.name = "Experiment"
+        self.statusBP = False # Flag to ensure that buttonGauss is only enabled when param values are loaded
+
         # Main layout
         self.layout = QVBoxLayout()
-        self.name = "Experiment"
         userInputLayout(self, inPath)
         
         # Number of Gaussians
@@ -44,7 +46,6 @@ class GaussianGenerator(QWidget):
         self.buttonParams = QPushButton("Create Parameter Fields")
         self.buttonParams.setEnabled(False)
         self.buttonParams.clicked.connect(self.create_input_fields)
-        self.statusBP = False
 
         num_gaussians_layout.addWidget(num_gaussians_label)
         num_gaussians_layout.addWidget(self.num_gaussians_entry)
@@ -63,14 +64,14 @@ class GaussianGenerator(QWidget):
         self.layout.addWidget(self.scroll)
 
         ############ CAMERA SELECTION ####################
+        self.statusCam = False
         self.pathCamRoot = inPath.text()+"/data"
         # Path selection
         self.pathCamLayout = QHBoxLayout()
         self.labelCamDir = QLabel("Select Cameras: ")
-        self.pathCamDir = QLineEdit(self)
-        #self.pathCamDir.setWindow(self)
-        #self.pathCamDir.returnPressed.connect(lambda: self.checkCamDirValidity())
-        self.pathCamDir.textChanged.connect(lambda: self.checkCamDirValidity())
+        self.pathCamDir = CamLineEdit(self)
+        self.pathCamDir.setWindow(self)
+        #self.pathCamDir.textChanged.connect(lambda: self.checkCamDirValidity())
         self.pathCamLayout.addWidget(self.labelCamDir)
         self.pathCamLayout.addWidget(self.pathCamDir)
         self.layout.addLayout(self.pathCamLayout)
@@ -102,18 +103,8 @@ class GaussianGenerator(QWidget):
       # Open the QFileDialog to data director
       dirPath = QFileDialog.getExistingDirectory(None, 'Select Directory', self.pathCamRoot)
       self.pathCamDir.setText(os.path.basename(os.path.normpath(dirPath)))
-    
-    def checkCamDirValidity(self):
-      # Check if the directory exists and ask the user if they want to create it if it doesn't
-      dir_path = self.pathCamRoot + "/"+self.pathCamDir.text() #completeCamPath(parent)
-      if not dir_path or not os.path.isdir(dir_path):
-          self.statusCam = False
-      else:
-          self.statusCam = True
 
     def create_input_fields(self):
-        # set buttonParam status
-        self.statusBP = True
 
         # Clear previous entries if any
         for i in reversed(range(self.gaussian_layout.count())):
@@ -195,7 +186,10 @@ class GaussianGenerator(QWidget):
             self.scales_entries.append([s1, s2, s3])
 
         self.adjustSize()
-        self.buttonGauss.setEnabled(True)
+
+        # Let enable buttonGauss now that default param values are loaded
+        self.statusBP = True
+        toggleButtons(self)
 
     def update_checkpoint(self):
         # Get user inputs
