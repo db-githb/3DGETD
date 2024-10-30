@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout, QMessageBox
 )
 
-from utils import userInputLayout, openDirectoryDialog, checkDirectoryValidity
+from utils import subDirDict, CustomLineEdit, userInputLayout, openDirectoryDialog, checkDirectoryValidity
 
 features_rest_1 = torch.tensor([[[ 3.7400e-02,  2.9200e-02,  3.2000e-03],
                               [ 1.0500e-02, -1.3500e-02, -1.2000e-02],
@@ -62,6 +62,25 @@ class GaussianGenerator(QWidget):
         self.scroll.setWidgetResizable(True)
         self.layout.addWidget(self.scroll)
 
+        ############ CAMERA SELECTION ####################
+        self.pathCamRoot = inPath.text()+"/data"
+        # Path selection
+        self.pathCamLayout = QHBoxLayout()
+        self.labelCamDir = QLabel("Select Cameras: ")
+        self.pathCamDir = QLineEdit(self)
+        #self.pathCamDir.setWindow(self)
+        #self.pathCamDir.returnPressed.connect(lambda: self.checkCamDirValidity())
+        self.pathCamDir.textChanged.connect(lambda: self.checkCamDirValidity())
+        self.pathCamLayout.addWidget(self.labelCamDir)
+        self.pathCamLayout.addWidget(self.pathCamDir)
+        self.layout.addLayout(self.pathCamLayout)
+
+        # Create a button to open the directory dialogpath
+        self.buttonBrowseCams = QPushButton("Browse")
+        self.buttonBrowseCams.clicked.connect(lambda: self.openCamDirectoryDialog())
+        self.pathCamLayout.addWidget(self.buttonBrowseCams)
+        #################################################
+
         # Update button
         self.buttonGauss = QPushButton("Generate Gaussians")
         self.buttonGauss.setEnabled(False)
@@ -78,6 +97,19 @@ class GaussianGenerator(QWidget):
         self.opacity_entries = []
         self.quats_entries = []
         self.scales_entries = []
+
+    def openCamDirectoryDialog(self):
+      # Open the QFileDialog to data director
+      dirPath = QFileDialog.getExistingDirectory(None, 'Select Directory', self.pathCamRoot)
+      self.pathCamDir.setText(os.path.basename(os.path.normpath(dirPath)))
+    
+    def checkCamDirValidity(self):
+      # Check if the directory exists and ask the user if they want to create it if it doesn't
+      dir_path = self.pathCamRoot + "/"+self.pathCamDir.text() #completeCamPath(parent)
+      if not dir_path or not os.path.isdir(dir_path):
+          self.statusCam = False
+      else:
+          self.statusCam = True
 
     def create_input_fields(self):
         # set buttonParam status
@@ -206,7 +238,7 @@ class GaussianGenerator(QWidget):
 
         # Create a config.yml file if it does't exist
         config_filepath = self.pathEntry.text() + "/config.yml"
-        self.data_path = "DUMMY VALUE" #"\n".join("- {dir}".format(dir=i) for i in range(path))
+        self.data_path = self.pathCamDir.text() #"\n".join("- {dir}".format(dir=i) for i in range(path))
 
         yaml_content = f"""
         !!python/object:nerfstudio.engine.trainer.TrainerConfig
@@ -490,11 +522,3 @@ class GaussianGenerator(QWidget):
         # Save checkpoint
         torch.save(checkpoint, checkpoint_file) 
         print("End: SYSTEM TEST DATA " + str(dt.datetime.now().time()))
-
-
-# Run the application
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = GaussianGenerator()
-    window.show()
-    sys.exit(app.exec_())

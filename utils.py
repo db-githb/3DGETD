@@ -92,6 +92,8 @@ def toggleButtons(parent, event=None):
         
     dirPath = completePath(parent, event)
     statusBG = parent.statusBP if hasattr(parent, "pathDir") else True
+    if hasattr(parent, "statusCam"):
+        statusBG = statusBG and parent.statusCam
 
     if dirPath and os.path.isdir(dirPath) and os.path.basename(dirPath) != "":
         if hasattr(parent, "buttonEnter"): parent.buttonEnter.setEnabled(False)
