@@ -1,7 +1,9 @@
 import os
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeyEvent
-from PyQt5.QtWidgets import QFileDialog, QMessageBox, QLineEdit
+from PyQt5.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QMessageBox, QLineEdit
+
+subDirDict = {"Experiment": "test_models", "Cameras": "data"}
 
 class CustomLineEdit(QLineEdit):
     def __init__(self, *args, **kwargs):
@@ -16,6 +18,43 @@ class CustomLineEdit(QLineEdit):
         super().keyPressEvent(event)
         toggleButtons(self.parent, event)
 
+def userInputLayout(parent, inPath):
+    name = parent.name
+    path = inPath.text()
+    parent.pathEntry = QLineEdit()
+    parent.pathEntry.setText(path)
+    # Check if test_models directory exists, if not, create it
+    if os.path.basename(os.path.normpath(path)) != subDirDict[name]:
+        pathGG = os.path.join(path, subDirDict[name])
+        parent.pathEntry.setText(pathGG)
+        if not os.path.exists(pathGG):
+          os.makedirs(pathGG)
+
+    # Path selection
+    parent.pathLayout = QHBoxLayout()
+    parent.labelExp = QLabel(f"{name} Name: ")
+    parent.pathDir = CustomLineEdit(parent)
+    parent.pathDir.setWindow(parent)
+    parent.pathDir.returnPressed.connect(lambda: checkDirectoryValidity(parent))
+    parent.pathLayout.addWidget(parent.labelExp)
+    parent.pathLayout.addWidget(parent.pathDir)
+    parent.layout.addLayout(parent.pathLayout)
+
+    # Create a button to open the directory dialogpath
+    parent.buttonBrowse = QPushButton("Browse")
+    parent.buttonBrowse.clicked.connect(lambda: openDirectoryDialog(parent))
+    parent.pathLayout.addWidget(parent.buttonBrowse)
+
+    # Create an Enter button for the user to confirm the directory
+    parent.buttonEnter = QPushButton(f"Create {name} Directory", parent)
+    parent.buttonEnter.setEnabled(False)
+    parent.buttonEnter.clicked.connect(lambda: checkDirectoryValidity(parent))
+    parent.layout.addWidget(parent.buttonEnter)
+
+    # Display full directory path for experiment
+    parent.labelPath = QLabel(f'Selected Directory: {parent.pathEntry.text()}')
+    parent.layout.addWidget(parent.labelPath)
+
 def completePath(parent, event=None):
     # pathEntry maintains root project path
     dirPath = parent.pathEntry.text()
@@ -29,7 +68,7 @@ def completePath(parent, event=None):
         else:
             # ensure experiment folder is under test_models, otherwise when backspace is invoked it could create sub folders for every sub string when backspacing
             partsPath = dirPath.split(os.sep)
-            index = partsPath.index("test_models")
+            index = partsPath.index(subDirDict[parent.name])
             dirPath = os.sep.join(partsPath[:index + 1])+"/"+parent.pathDir.text()
             parent.pathEntry.setText(dirPath)
             parent.labelPath.setText(f'Selected Directory: {dirPath}')

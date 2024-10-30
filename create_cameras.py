@@ -3,7 +3,7 @@ from random import randint
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout
 )
-
+from utils import userInputLayout
 # Default custom path
 default_path = "/home/damian/projects/nerfstudio/data/_unit_test/" # "/your/default/path/"  # Replace this with your actual default path
 
@@ -15,26 +15,16 @@ class CreateCameras(QWidget):
     def __init__(self):
         super().__init__()
     
-    def __init__(self, dirPath=None):
+    def __init__(self, inPath=None):
         super().__init__()
-        
-        self.dir_path = dirPath
+
         self.setWindowTitle("Create Cameras")
 
         # Main layout
-        layout = QVBoxLayout()
-
+        self.layout = QVBoxLayout()
+        self.name = "Cameras"
         # Path selection
-        path_layout = QHBoxLayout()
-        path_label = QLabel("Select Path:")
-        self.path_entry = QLineEdit(default_path)
-        browse_button = QPushButton("Browse")
-        browse_button.clicked.connect(self.browse_path)
-
-        path_layout.addWidget(path_label)
-        path_layout.addWidget(self.path_entry)
-        path_layout.addWidget(browse_button)
-        layout.addLayout(path_layout)
+        userInputLayout(self, inPath)
 
         # Number of Cameras
         num_cameras_layout = QHBoxLayout()
@@ -42,39 +32,36 @@ class CreateCameras(QWidget):
         self.num_cameras_entry = QLineEdit("1")  # Default to 1 camera
         generate_button = QPushButton("Create Parameter Fields")
         generate_button.clicked.connect(self.create_input_fields)
+        self.statusBP = False
 
         num_cameras_layout.addWidget(num_cameras_label)
         num_cameras_layout.addWidget(self.num_cameras_entry)
         num_cameras_layout.addWidget(generate_button)
-        layout.addLayout(num_cameras_layout)
+        self.layout.addLayout(num_cameras_layout)
 
         # Scroll area for dynamically generated input fields
         min_width = 500
-        min_height = 200
+        min_height = 100
         self.scroll = QScrollArea()
         self.scroll.setMinimumSize(min_width,min_height)
         self.camera_frame = QWidget()
         self.camera_layout = QGridLayout(self.camera_frame)
         self.scroll.setWidget(self.camera_frame)
         self.scroll.setWidgetResizable(True)
-        layout.addWidget(self.scroll)
+        self.layout.addWidget(self.scroll)
 
         # Update button
         update_button = QPushButton("Create Cameras")
         update_button.clicked.connect(self.update_txt_files)
-        layout.addWidget(update_button)
+        self.layout.addWidget(update_button)
 
         # Set the main layout
-        self.setLayout(layout)
+        self.setLayout(self.layout)
 
         # Initialize storage for Camera input fields
         self.pos_entries = []
         self.quats_entries = []
     
-    def browse_path(self):
-        folder_selected = QFileDialog.getExistingDirectory(self, "Select Directory")
-        if folder_selected:
-            self.path_entry.setText(folder_selected + "/")
 
     def create_input_fields(self):
         # Clear previous entries if any
@@ -89,8 +76,8 @@ class CreateCameras(QWidget):
         self.quats_entries = []
 
         for i in range(num_cameras):
-            row_offset = i * 6  # Space out each Gaussian by 6 rows
-            self.camera_layout.addWidget(QLabel(f"Camera {i+1}:"), row_offset, 0, 1, 8)
+            row_offset = i * 6  # Space out each Camera by 6 rows
+            self.camera_layout.addWidget(QLabel(f"<b>Camera {i+1}</b>:"), row_offset, 0, 1, 8)
 
             # camera positions
             self.camera_layout.addWidget(QLabel("means:"), row_offset + 2, 0)
@@ -116,7 +103,7 @@ class CreateCameras(QWidget):
 
     def update_txt_files(self):
         # Get user inputs
-        ns_path = self.path_entry.text()
+        ns_path = self.pathEntry.text()
         num_cameras = int(self.num_cameras_entry.text())
 
         pos = []

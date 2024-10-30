@@ -7,10 +7,8 @@ from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout, QMessageBox
 )
 
-from utils import CustomLineEdit, openDirectoryDialog, toggleButtons, checkDirectoryValidity
+from utils import userInputLayout, openDirectoryDialog, checkDirectoryValidity
 
-# Default custom path
-default_path = "/home/damian/projects/nerfstudio/outputs/unnamed/splatfacto/_unit_test/" # "/your/default/path/"  # Replace this with your actual default path
 features_rest_1 = torch.tensor([[[ 3.7400e-02,  2.9200e-02,  3.2000e-03],
                               [ 1.0500e-02, -1.3500e-02, -1.2000e-02],
                               [-3.6000e-02, -3.1200e-02, -5.1600e-02],
@@ -34,44 +32,11 @@ class GaussianGenerator(QWidget):
     def __init__(self, inPath=None):
         super().__init__()
 
-        path = inPath.text()
-        self.pathEntry = QLineEdit()
-        self.pathEntry.setText(path)
-        # Check if test_models directory exists, if not, create it
-        if os.path.basename(os.path.normpath(path)) != "test_models":
-            pathGG = os.path.join(path, "test_models")
-            self.pathEntry.setText(pathGG)
-            if not os.path.exists(pathGG):
-              os.makedirs(pathGG)
-
         # Main layout
         self.layout = QVBoxLayout()
-
-        # Path selection
-        self.pathLayout = QHBoxLayout()
-        self.labelExp = QLabel("Experiment Name: ")
-        self.pathDir = CustomLineEdit(self)
-        self.pathDir.setWindow(self)
-        self.pathDir.returnPressed.connect(lambda: checkDirectoryValidity(self))
-        self.pathLayout.addWidget(self.labelExp)
-        self.pathLayout.addWidget(self.pathDir)
-        self.layout.addLayout(self.pathLayout)
-
-        # Create a button to open the directory dialogpath
-        self.buttonBrowse = QPushButton("Browse")
-        self.buttonBrowse.clicked.connect(lambda: openDirectoryDialog(self))
-        self.pathLayout.addWidget(self.buttonBrowse)
-
-        # Create an Enter button for the user to confirm the directory
-        self.buttonEnter = QPushButton('Create Experiment Directory', self)
-        self.buttonEnter.setEnabled(False)
-        self.buttonEnter.clicked.connect(lambda: checkDirectoryValidity(self))
-        self.layout.addWidget(self.buttonEnter)
-
-        # Display full directory path for experiment
-        self.labelPath = QLabel(f'Selected Directory: {self.pathEntry.text()}')
-        self.layout.addWidget(self.labelPath)
-
+        self.name = "Experiment"
+        userInputLayout(self, inPath)
+        
         # Number of Gaussians
         num_gaussians_layout = QHBoxLayout()
         num_gaussians_label = QLabel("Number of 3D Gaussians:")
@@ -117,7 +82,7 @@ class GaussianGenerator(QWidget):
     def create_input_fields(self):
         # set buttonParam status
         self.statusBP = True
-        
+
         # Clear previous entries if any
         for i in reversed(range(self.gaussian_layout.count())):
             widget_to_remove = self.gaussian_layout.itemAt(i).widget()
@@ -134,7 +99,7 @@ class GaussianGenerator(QWidget):
 
         for i in range(num_gaussians):
             row_offset = i * 6  # Space out each Gaussian by 6 rows
-            self.gaussian_layout.addWidget(QLabel(f"Gaussian {i+1}:"), row_offset, 0, 1, 8)
+            self.gaussian_layout.addWidget(QLabel(f"<b>Gaussian {i+1}</b>:"), row_offset, 0, 1, 8)
 
             # features_dc
             self.gaussian_layout.addWidget(QLabel("diffuse (base) color:"), row_offset + 1, 0)
