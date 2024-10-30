@@ -106,7 +106,6 @@ def toggleButtons(parent, event=None):
             parent.labelPath.setText('No directory selected')
         # reset buttonParam status
         if hasattr(parent, "statusBP"): parent.statusBP = False
-
  
 def checkDirectoryValidity(parent):
     # Check if the directory exists and ask the user if they want to create it if it doesn't
