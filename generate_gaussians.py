@@ -102,12 +102,15 @@ class GaussianGenerator(QWidget):
       # Open the QFileDialog to data director
       dirPath = QFileDialog.getExistingDirectory(None, 'Select Directory', self.pathCamRoot)
       self.pathCamDir.setText(os.path.basename(os.path.normpath(dirPath)))
+      self.checkCamDirValidity()
+      # when you open directory dialogue but hit cancel without selecting anything, directory dialogue returns a "."
+      # so need to directory validity to prevent buttonGauss being enabled for "." 
     
     def checkCamDirValidity(self):
         # Check if the directory exists and ask the user if they want to create it if it doesn't
         camDir = self.pathCamDir.text()
         fullCamPath = os.path.join(self.pathCamRoot, camDir)
-        if os.path.isdir(fullCamPath) and camDir != "":
+        if os.path.isdir(fullCamPath) and camDir != "" and camDir != ".":
             self.statusCam = True
             toggleButtons(self)
         else:

@@ -19,13 +19,15 @@ class CustomLineEdit(QLineEdit):
 
 def userInputLayout(parent, inPath):
     name = parent.name
-    path = inPath.text()
+    parent.pathRoot = inPath.text()
     parent.pathEntry = QLineEdit()
-    parent.pathEntry.setText(path)
+    parent.pathEntry.setText(parent.pathRoot)
+
     # Check if test_models directory exists, if not, create it
-    if os.path.basename(os.path.normpath(path)) != subDirDict[name]:
-        pathGG = os.path.join(path, subDirDict[name])
+    if os.path.basename(os.path.normpath(parent.pathRoot)) != subDirDict[name]:
+        pathGG = os.path.join(parent.pathRoot, subDirDict[name])
         parent.pathEntry.setText(pathGG)
+        parent.pathRoot = pathGG
         if not os.path.exists(pathGG):
           os.makedirs(pathGG)
 
@@ -58,19 +60,10 @@ def completePath(parent, event=None):
     # pathEntry maintains root project path
     dirPath = parent.pathEntry.text()
     if hasattr(parent, "pathDir"): # non-main_windows have pathDir attributes
-        # add subfolder to root project path
-        if event != None and event.key() != Qt.Key_Backspace:
             # add user input to root project path
-            dirPath = os.path.join(parent.pathEntry.text(), parent.pathDir.text())
+            dirPath = os.path.join(parent.pathRoot, parent.pathDir.text())
             parent.pathEntry.setText(dirPath) # display folder name
             parent.labelPath.setText(f'Selected Directory: {dirPath}') # full display project path
-        else:
-            # ensure experiment folder is under test_models, otherwise when backspace is invoked it could create sub folders for every sub string when backspacing
-            partsPath = dirPath.split(os.sep)
-            index = partsPath.index(subDirDict[parent.name])
-            dirPath = os.sep.join(partsPath[:index + 1])+"/"+parent.pathDir.text()
-            parent.pathEntry.setText(dirPath)
-            parent.labelPath.setText(f'Selected Directory: {dirPath}')
             
     return dirPath
 
@@ -87,21 +80,25 @@ def openDirectoryDialog(parent):
     # Set the directory path in the line edit
     parent.pathEntry.setText(dirPath)
 
-def toggleButtons(parent, event=None):
-        
+def toggleButtons(parent, event=None):    
     dirPath = completePath(parent, event)
+
     statusBG = parent.statusBP if hasattr(parent, "pathDir") else True
     if hasattr(parent, "statusCam"):
         statusBG = statusBG and parent.statusCam
 
-    if dirPath and os.path.isdir(dirPath) and os.path.basename(dirPath) != "":
+    basename = os.path.basename(dirPath)
+    if dirPath and os.path.isdir(dirPath) and basename != "" and basename != ".":
         if hasattr(parent, "buttonEnter"): parent.buttonEnter.setEnabled(False)
         if hasattr(parent, "buttonCam"): parent.buttonCam.setEnabled(True)
         if hasattr(parent, "buttonGauss"): parent.buttonGauss.setEnabled(statusBG)
         if hasattr(parent, "buttonParams"): parent.buttonParams.setEnabled(True)
         if hasattr(parent, "labelPath"): parent.labelPath.setText(f'Selected Directory: {dirPath}')
     else:
-        if hasattr(parent, "buttonEnter"): parent.buttonEnter.setEnabled(True)
+        if hasattr(parent, "buttonEnter") and basename != "":
+            parent.buttonEnter.setEnabled(True)
+        else:
+            parent.buttonEnter.setEnabled(False)   
         if hasattr(parent, "buttonCam"): parent.buttonCam.setEnabled(False)
         if hasattr(parent, "buttonGauss"): parent.buttonGauss.setEnabled(False)
         if hasattr(parent, "buttonParams"): parent.buttonParams.setEnabled(False)
