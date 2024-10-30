@@ -104,9 +104,6 @@ def toggleButtons(parent, event=None):
         if hasattr(parent, "buttonParams"): parent.buttonParams.setEnabled(False)
         if hasattr(parent, "labelPath") and parent.__class__.__name__ == "MainWindow": 
             parent.labelPath.setText('No directory selected')
-        # Clear base of path address as user types to prevent each letter being
-        # added to pathEntry when program returns to completePath
-        if hasattr(parent, "pathDir"): parent.pathEntry.setText(os.path.split(dirPath)[0])
         # reset buttonParam status
         if hasattr(parent, "statusBP"): parent.statusBP = False
 
