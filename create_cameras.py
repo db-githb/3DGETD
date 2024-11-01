@@ -138,11 +138,11 @@ class CreateCameras(QWidget):
             ])
 
         # Check if file path exists, if it doesn't create it
-        colmapPath = os.path.join(ns_path, "colmap", "sparse", "0")
-        if not os.path.isdir(colmapPath):
-            os.makedirs(colmapPath, exist_ok=True)
+        pathData = self.pathEntry.text()
+        if not os.path.isdir(pathData):
+            os.makedirs(pathData, exist_ok=True)
 
-        cameras_txt_filepath = os.path.join(colmapPath, "cameras.txt")
+        cameras_txt_filepath = os.path.join(pathData, "cameras.txt")
         camera_line_template = "{id} PINHOLE 1000 1000 500 500 500 500"
         camera_lines = "\n".join(camera_line_template.format(id=i + 1) for i in range(num_cameras))
 
@@ -157,7 +157,7 @@ class CreateCameras(QWidget):
             file.write(cameras_content)
 
         # Create a images.txt file if it does't exist
-        images_txt_filepath = os.path.join(colmapPath, "images.txt")
+        images_txt_filepath = os.path.join(pathData, "images.txt")
 
         image_lines_template = "{id}       {q1} {q2} {q3} {q4}       {p1} {p2} {p3}     {id} test.jpg"
         image_lines = "\n".join(image_lines_template.format(id=i + 1,

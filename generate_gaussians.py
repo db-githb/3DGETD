@@ -272,7 +272,7 @@ class GaussianGenerator(QWidget):
         #os.makedirs(self.pathEntry.text() + "/nerfstudio_models/", exist_ok=True)
 
         # Check if the checkpoint file exists
-        checkpoint_file = self.pathEntry.text() + "/step-000029999.ckpt"
+        checkpoint_file = self.pathEntry.text() + "/step-000000000.ckpt"
         if os.path.exists(checkpoint_file):
             # Load existing checkpoint
             checkpoint = torch.load(checkpoint_file)
@@ -304,7 +304,7 @@ class GaussianGenerator(QWidget):
         print("End: SYSTEM TEST DATA " + str(dt.datetime.now().time()))
 
         # Create a points3D.txt file if it does't exist
-        points3D_txt_filepath = os.path.join(self.pathData, "colmap", "sparse", "0", "points3D.txt")
+        points3D_txt_filepath = os.path.join(self.pathData, "points3D.txt")
 
         point_line_template = "{id} {x} {y} {z} {r} {g} {b} 0 0 0 0 0 0 0 0 0"
         id = range(num_gaussians)

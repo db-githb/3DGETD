@@ -128,9 +128,7 @@ def getYamlContent(pathDir, dataPath):
               auto_scale_poses: false
               center_method: none
               colmap_path: !!python/object/apply:pathlib.PosixPath
-              - colmap
-              - sparse
-              - '0'
+              - {dataPath}
               data: !!python/object/apply:pathlib.PosixPath
               - {dataPath}
               depth_unit_scale_factor: 0.001
@@ -208,7 +206,7 @@ def getYamlContent(pathDir, dataPath):
         steps_per_eval_batch: 0
         steps_per_eval_image: 100
         steps_per_save: 2000
-        timestamp: {dataPath}
+        timestamp: {pathDir}
         use_grad_scaler: false
         viewer: !!python/object:nerfstudio.configs.base_config.ViewerConfig
           camera_frustum_scale: 0.1
