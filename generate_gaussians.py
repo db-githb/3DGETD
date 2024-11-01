@@ -244,7 +244,7 @@ class GaussianGenerator(QWidget):
 
         # Create a config.yml file if it does't exist
         config_filepath = self.pathEntry.text() + "/config.yml"
-        self.data_path = self.pathCamDir.text() #"\n".join("- {dir}".format(dir=i) for i in range(path))
+        self.data_path = os.path.join(self.pathCamRoot, self.pathCamDir.text()) #"\n".join("- {dir}".format(dir=i) for i in range(path))
 
         yaml_content = f"""
         !!python/object:nerfstudio.engine.trainer.TrainerConfig
@@ -375,11 +375,8 @@ class GaussianGenerator(QWidget):
               auto_scale_poses: false
               center_method: none
               colmap_path: !!python/object/apply:pathlib.PosixPath
-              - colmap
-              - sparse
-              - '0'
+              - {self.data_path}
               data: !!python/object/apply:pathlib.PosixPath
-              - data
               - {self.data_path}
               depth_unit_scale_factor: 0.001
               depths_path: null
