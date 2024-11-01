@@ -279,7 +279,7 @@ class GaussianGenerator(QWidget):
         else:
             # Create a new checkpoint with default values
             checkpoint = {
-                "step": 29999,
+                "step": 0,
                 "pipeline": {
                     "_model.gauss_params.features_dc": torch.zeros((num_gaussians, 3), device='cuda'),
                     "_model.gauss_params.features_rest": torch.zeros([num_gaussians,15,3], device="cuda"),
