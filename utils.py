@@ -83,15 +83,15 @@ def openDirectoryDialog(parent):
 def toggleButtons(parent, event=None):    
     dirPath = completePath(parent, event)
 
-    statusBG = parent.statusBP if hasattr(parent, "pathDir") else True
+    status = parent.statusBP if hasattr(parent, "pathDir") else True
     if hasattr(parent, "statusCam"):
-        statusBG = statusBG and parent.statusCam
+        status = status and parent.statusCam
 
     basename = os.path.basename(dirPath)
     if dirPath and os.path.isdir(dirPath) and basename != "" and basename != ".":
         if hasattr(parent, "buttonEnter"): parent.buttonEnter.setEnabled(False)
-        if hasattr(parent, "buttonCam"): parent.buttonCam.setEnabled(True)
-        if hasattr(parent, "buttonGauss"): parent.buttonGauss.setEnabled(statusBG)
+        if hasattr(parent, "buttonCam"): parent.buttonCam.setEnabled(status)
+        if hasattr(parent, "buttonGauss"): parent.buttonGauss.setEnabled(status)
         if hasattr(parent, "buttonParams"): parent.buttonParams.setEnabled(True)
         if hasattr(parent, "labelPath"): parent.labelPath.setText(f'Selected Directory: {dirPath}')
     else:

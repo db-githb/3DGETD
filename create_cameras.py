@@ -3,7 +3,9 @@ from random import randint
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout
 )
-from utils import userInputLayout
+import numpy as np
+from PIL import Image
+from utils import userInputLayout, toggleButtons
 # Default custom path
 default_path = "/home/damian/projects/nerfstudio/data/_unit_test/" # "/your/default/path/"  # Replace this with your actual default path
 
@@ -23,6 +25,7 @@ class CreateCameras(QWidget):
         # Main layout
         self.layout = QVBoxLayout()
         self.name = "Cameras"
+        self.statusBP = False 
         # Path selection
         userInputLayout(self, inPath)
 
@@ -30,13 +33,14 @@ class CreateCameras(QWidget):
         num_cameras_layout = QHBoxLayout()
         num_cameras_label = QLabel("Number of Cameras:")
         self.num_cameras_entry = QLineEdit("1")  # Default to 1 camera
-        generate_button = QPushButton("Create Parameter Fields")
-        generate_button.clicked.connect(self.create_input_fields)
+        self.buttonParams = QPushButton("Create Parameter Fields")
+        self.buttonParams.setEnabled(False)
+        self.buttonParams.clicked.connect(self.create_input_fields)
         self.statusBP = False
 
         num_cameras_layout.addWidget(num_cameras_label)
         num_cameras_layout.addWidget(self.num_cameras_entry)
-        num_cameras_layout.addWidget(generate_button)
+        num_cameras_layout.addWidget(self.buttonParams)
         self.layout.addLayout(num_cameras_layout)
 
         # Scroll area for dynamically generated input fields
@@ -51,9 +55,10 @@ class CreateCameras(QWidget):
         self.layout.addWidget(self.scroll)
 
         # Update button
-        update_button = QPushButton("Create Cameras")
-        update_button.clicked.connect(self.update_txt_files)
-        self.layout.addWidget(update_button)
+        self.buttonCam = QPushButton("Create Cameras")
+        self.buttonCam.setEnabled(False)
+        self.buttonCam.clicked.connect(self.update_files)
+        self.layout.addWidget(self.buttonCam)
 
         # Set the main layout
         self.setLayout(self.layout)
@@ -101,6 +106,13 @@ class CreateCameras(QWidget):
             self.camera_layout.addWidget(q4, row_offset + 4, 4)
             self.quats_entries.append([q1, q2, q3, q4])
 
+            self.statusBP = True
+            toggleButtons(self)
+
+    def update_files(self):
+        self.update_txt_files()
+        self.create_images()
+    
     def update_txt_files(self):
         # Get user inputs
         ns_path = self.pathEntry.text()
@@ -170,3 +182,14 @@ class CreateCameras(QWidget):
 
         with open(images_txt_filepath, 'w') as file:
             file.write(images_content)
+
+    def create_images(self):
+        pathImage = os.path.join(self.pathEntry.text(), "images/")
+        #num_cameras = int(self.num_cameras_entry.text())
+        if not os.path.isdir(pathImage):
+            os.makedirs(pathImage, exist_ok=True)
+
+        image = Image.new("RGB", (1000, 1000), (255,0,0))
+
+        # Save the image
+        image.save(pathImage+"test.jpg")
