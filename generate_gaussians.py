@@ -246,7 +246,7 @@ class GaussianGenerator(QWidget):
         config_filepath = self.pathEntry.text() + "/config.yml"
         self.pathData = os.path.join(self.pathCamRoot, self.pathCamDir.text()) #"\n".join("- {dir}".format(dir=i) for i in range(path))
 
-        yamlContent = getYamlContent(self.pathDir.text(), self.pathData)
+        yamlContent = getYamlContent(self.pathDir.text(), self.pathData, os.path.dirname(self.pathEntry.text()))
 
         # Modify the parameter by searching for the line containing it
         #for i, line in enumerate(yaml_content):
@@ -269,10 +269,11 @@ class GaussianGenerator(QWidget):
                 json.dump(dataparser_transforms, json_file, indent=4)  # indent=4 for pretty-printing
 
         # Check if parent directory for checkpoint exists, if it doesn't create it
-        #os.makedirs(self.pathEntry.text() + "/nerfstudio_models/", exist_ok=True)
+        pathSplatfactoDir = os.path.join(self.pathEntry.text(), "splatfacto")
+        os.makedirs(pathSplatfactoDir, exist_ok=True)
 
         # Check if the checkpoint file exists
-        checkpoint_file = self.pathEntry.text() + "/step-000000000.ckpt"
+        checkpoint_file =  os.path.join(pathSplatfactoDir, "step-000000000.ckpt")
         if os.path.exists(checkpoint_file):
             # Load existing checkpoint
             checkpoint = torch.load(checkpoint_file)
@@ -303,20 +304,30 @@ class GaussianGenerator(QWidget):
         torch.save(checkpoint, checkpoint_file) 
         print("End: SYSTEM TEST DATA " + str(dt.datetime.now().time()))
 
-        # Create a points3D.txt file if it does't exist
+        # points3D isn't actually used for rendering by NS BUT minimum 4 points are needed when loading the model of k-nearest neighbours
         points3D_txt_filepath = os.path.join(self.pathData, "points3D.txt")
 
         point_line_template = "{id} {x} {y} {z} {r} {g} {b} 0 0 0 0 0 0 0 0 0"
         id = range(num_gaussians)
+        
         point_lines = "\n".join(point_line_template.format(
             id=i,
             x=m[0], y=m[1], z=m[2],
             r=c[0], g=c[1], b=c[2]) for i,m,c in zip(id, means, features_dc))
-
+        
+        num_points = num_gaussians
+        if num_gaussians < 4:
+            num_points = 4-num_gaussians
+            point_lines_2 = "\n".join(point_line_template.format(
+                id=i,
+                x=i, y=i, z=i,
+                r=i, g=i, b=i) for i in range(len(id), 4))
+            point_lines += "\n"+point_lines_2
+        
         cameras_content = f"""
 # 3D point list with one line of data per point:
 #   POINT3D_ID, X, Y, Z, R, G, B, ERROR, TRACK[] as (IMAGE_ID, POINT2D_IDX)
-# Number of points: {num_gaussians}, mean track length: 3.3334
+# Number of points: {num_points}, mean track length: 3.3334
 {point_lines}
         """
 

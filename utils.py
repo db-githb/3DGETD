@@ -2,7 +2,7 @@ import os
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QMessageBox, QLineEdit
 
-subDirDict = {"Experiment": "test_models", "Cameras": "data"}
+subDirDict = {"Experiment": "models", "Cameras": "data"}
 
 class CustomLineEdit(QLineEdit):
     def __init__(self, *args, **kwargs):

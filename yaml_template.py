@@ -1,4 +1,4 @@
-def getYamlContent(pathDir, dataPath):
+def getYamlContent(pathDir, dataPath, modelPath):
     yaml_content = f"""
         !!python/object:nerfstudio.engine.trainer.TrainerConfig
         _target: !!python/name:nerfstudio.engine.trainer.Trainer ''
@@ -9,7 +9,7 @@ def getYamlContent(pathDir, dataPath):
         load_config: null
         load_dir: null
         load_scheduler: true
-        load_step: null
+        load_step: 0
         log_gradients: false
         logging: !!python/object:nerfstudio.configs.base_config.LoggingConfig
           local_writer: !!python/object:nerfstudio.configs.base_config.LocalWriterConfig
@@ -113,7 +113,7 @@ def getYamlContent(pathDir, dataPath):
               weight_decay: 0
             scheduler: null
         output_dir: !!python/object/apply:pathlib.PosixPath
-        - test_models
+        - {modelPath}
         pipeline: !!python/object:nerfstudio.pipelines.base_pipeline.VanillaPipelineConfig
           _target: !!python/name:nerfstudio.pipelines.base_pipeline.VanillaPipeline ''
           datamanager: !!python/object:nerfstudio.data.datamanagers.full_images_datamanager.FullImageDatamanagerConfig
@@ -200,13 +200,13 @@ def getYamlContent(pathDir, dataPath):
         project_name: nerfstudio-project
         prompt: null
         relative_model_dir: !!python/object/apply:pathlib.PosixPath
-        - {dataPath}
+        - .
         save_only_latest_checkpoint: true
         steps_per_eval_all_images: 1000
         steps_per_eval_batch: 0
         steps_per_eval_image: 100
         steps_per_save: 2000
-        timestamp: {pathDir}
+        timestamp: .
         use_grad_scaler: false
         viewer: !!python/object:nerfstudio.configs.base_config.ViewerConfig
           camera_frustum_scale: 0.1
