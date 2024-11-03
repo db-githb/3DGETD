@@ -4,7 +4,7 @@ import torch
 import json
 import datetime as dt
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout, QMessageBox
 )
 from utils import userInputLayout, toggleButtons
 from yaml_template import getYamlContent
@@ -65,7 +65,9 @@ class GaussianGenerator(QWidget):
 
         ############ CAMERA SELECTION ####################
         self.statusCam = False
-        self.pathCamRoot = inPath.text()+"/data"
+        self.pathCamRoot =  os.path.join(inPath.text(), "data")
+        os.makedirs(self.pathCamRoot, exist_ok=True)
+        
         # Path selection
         self.pathCamLayout = QHBoxLayout()
         self.labelCamDir = QLabel("Select Cameras: ")

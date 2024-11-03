@@ -23,7 +23,7 @@ class MainWindow(QWidget):
 
         # Create a line edit for the user to type the directory
         self.pathEntry = QLineEdit(self)
-        self.pathLabel = QLabel("Select Path:")
+        self.pathLabel = QLabel("Select Project Path:")
         self.pathEntry.returnPressed.connect(lambda: checkDirectoryValidity(self))
         self.pathEntry.textChanged.connect(lambda: toggleButtons(self))
         self.mainWindowLayout.addWidget(self.pathLabel)
