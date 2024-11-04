@@ -4,7 +4,7 @@ import torch
 import json
 import datetime as dt
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout, QMessageBox
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout, QCheckBox
 )
 from utils import userInputLayout, toggleButtons
 from yaml_template import getYamlContent
@@ -62,6 +62,17 @@ class GaussianGenerator(QWidget):
         self.scroll.setWidget(self.gaussian_frame)
         self.scroll.setWidgetResizable(True)
         self.layout.addWidget(self.scroll)
+        
+        ############ NORMALIZE QUATS  ####################
+        self.normQuatFlag = False
+        self.pathCamLayout = QHBoxLayout()
+        self.normQuatLabel = QLabel("Normalize Quats")
+        self.normQuatCheckBox = QCheckBox(self)
+        self.normQuatCheckBox.setChecked(True)
+        self.normQuatCheckBox.stateChanged.connect(self.normalizeQuats)
+        self.pathCamLayout.addWidget(self.normQuatLabel)
+        self.pathCamLayout.addWidget(self.normQuatCheckBox)
+        self.layout.addLayout(self.pathCamLayout)
 
         ############ CAMERA SELECTION ####################
         self.statusCam = False
@@ -69,7 +80,6 @@ class GaussianGenerator(QWidget):
         os.makedirs(self.pathCamRoot, exist_ok=True)
         
         # Path selection
-        self.pathCamLayout = QHBoxLayout()
         self.labelCamDir = QLabel("Select Cameras: ")
         self.pathCamDir = QLineEdit(self)
         self.pathCamDir.textChanged.connect(lambda: self.checkCamDirValidity())
@@ -100,6 +110,12 @@ class GaussianGenerator(QWidget):
         self.quats_entries = []
         self.scales_entries = []
 
+    def normalizeQuats(self, state):
+        if state == 2:  # Checked
+            self.normQuatFlag = True
+        else:  # Unchecked
+            self.normQuatFlag = False
+    
     def openCamDirectoryDialog(self):
       # Open the QFileDialog to data director
       dirPath = QFileDialog.getExistingDirectory(None, 'Select Directory', self.pathCamRoot)
