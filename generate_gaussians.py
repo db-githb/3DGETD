@@ -62,17 +62,6 @@ class GaussianGenerator(QWidget):
         self.scroll.setWidget(self.gaussian_frame)
         self.scroll.setWidgetResizable(True)
         self.layout.addWidget(self.scroll)
-        
-        ############ NORMALIZE QUATS  ####################
-        self.normQuatFlag = False
-        self.pathCamLayout = QHBoxLayout()
-        self.normQuatLabel = QLabel("Normalize Quats")
-        self.normQuatCheckBox = QCheckBox(self)
-        self.normQuatCheckBox.setChecked(True)
-        self.normQuatCheckBox.stateChanged.connect(self.normalizeQuats)
-        self.pathCamLayout.addWidget(self.normQuatLabel)
-        self.pathCamLayout.addWidget(self.normQuatCheckBox)
-        self.layout.addLayout(self.pathCamLayout)
 
         ############ CAMERA SELECTION ####################
         self.statusCam = False
@@ -80,6 +69,7 @@ class GaussianGenerator(QWidget):
         os.makedirs(self.pathCamRoot, exist_ok=True)
         
         # Path selection
+        self.pathCamLayout = QHBoxLayout()
         self.labelCamDir = QLabel("Select Cameras: ")
         self.pathCamDir = QLineEdit(self)
         self.pathCamDir.textChanged.connect(lambda: self.checkCamDirValidity())
@@ -110,12 +100,6 @@ class GaussianGenerator(QWidget):
         self.quats_entries = []
         self.scales_entries = []
 
-    def normalizeQuats(self, state):
-        if state == 2:  # Checked
-            self.normQuatFlag = True
-        else:  # Unchecked
-            self.normQuatFlag = False
-    
     def openCamDirectoryDialog(self):
       # Open the QFileDialog to data director
       dirPath = QFileDialog.getExistingDirectory(None, 'Select Directory', self.pathCamRoot)
@@ -155,7 +139,9 @@ class GaussianGenerator(QWidget):
             self.gaussian_layout.addWidget(QLabel(f"<b>Gaussian {i+1}</b>:"), row_offset, 0, 1, 8)
 
             # features_dc
-            self.gaussian_layout.addWidget(QLabel("diffuse (base) color:"), row_offset + 1, 0)
+            labelFe = QLabel("color:")
+            labelFe.setToolTip("Diffuse (base) color: R G B, range=(0,255)")
+            self.gaussian_layout.addWidget(labelFe, row_offset + 1, 0)
 
             if i % 3 == 0:
                 fe1 = QLineEdit("1")
@@ -173,11 +159,12 @@ class GaussianGenerator(QWidget):
             self.gaussian_layout.addWidget(fe1, row_offset + 1, 1)
             self.gaussian_layout.addWidget(fe2, row_offset + 1, 2)
             self.gaussian_layout.addWidget(fe3, row_offset + 1, 3)
-            self.gaussian_layout.addWidget(QLabel("/255"), row_offset + 1, 4)
             self.features_entries.append([fe1, fe2, fe3])
 
             # means
-            self.gaussian_layout.addWidget(QLabel("means:"), row_offset + 2, 0)
+            labelMeans = QLabel("means:")
+            labelMeans.setToolTip("Means: x y z")
+            self.gaussian_layout.addWidget(labelMeans, row_offset + 2, 0)
             me1 = QLineEdit(str(i*2))
             me2 = QLineEdit("0")
             me3 = QLineEdit("0")
@@ -193,8 +180,10 @@ class GaussianGenerator(QWidget):
             self.opacity_entries.append(op)
 
             # quats
-            self.gaussian_layout.addWidget(QLabel("quats:"), row_offset + 4, 0)
-            qu1 = QLineEdit("0")
+            labelQuats = QLabel("quats:")
+            labelQuats.setToolTip("Quaternions: w x y z\nNote: Splatfacto requires quats.norm(dim=-1) - 1 < 1e-6).all()")
+            self.gaussian_layout.addWidget(labelQuats, row_offset + 4, 0)
+            qu1 = QLineEdit("1")
             qu2 = QLineEdit("0")
             qu3 = QLineEdit("0")
             qu4 = QLineEdit("0")
