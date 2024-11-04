@@ -181,7 +181,7 @@ class GaussianGenerator(QWidget):
 
             # quats
             labelQuats = QLabel("quats:")
-            labelQuats.setToolTip("Quaternions: w x y z\nNote: Splatfacto requires quats.norm(dim=-1) - 1 < 1e-6).all()")
+            labelQuats.setToolTip("Quaternions: w x y z\nNote: must be a unit length vector")
             self.gaussian_layout.addWidget(labelQuats, row_offset + 4, 0)
             qu1 = QLineEdit("1")
             qu2 = QLineEdit("0")
