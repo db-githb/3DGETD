@@ -54,6 +54,13 @@ class CreateCameras(QWidget):
         self.scroll.setWidgetResizable(True)
         self.layout.addWidget(self.scroll)
 
+        self.imageSizeLayout = QHBoxLayout()
+        labelImageSize = QLabel("Image Size:")
+        self.imageSize = QLineEdit("1000")
+        self.imageSizeLayout.addWidget(labelImageSize)
+        self.imageSizeLayout.addWidget(self.imageSize)
+        self.layout.addLayout(self.imageSizeLayout)
+
         # Update button
         self.buttonCam = QPushButton("Create Cameras")
         self.buttonCam.setEnabled(False)
@@ -85,7 +92,7 @@ class CreateCameras(QWidget):
             self.camera_layout.addWidget(QLabel(f"<b>Camera {i+1}</b>:"), row_offset, 0, 1, 8)
 
             # camera positions
-            self.camera_layout.addWidget(QLabel("means:"), row_offset + 2, 0)
+            self.camera_layout.addWidget(QLabel("position:"), row_offset + 2, 0)
             p1 = QLineEdit("0")
             p2 = QLineEdit("0")
             p3 = QLineEdit("2.0")
@@ -106,8 +113,8 @@ class CreateCameras(QWidget):
             self.camera_layout.addWidget(q4, row_offset + 4, 4)
             self.quats_entries.append([q1, q2, q3, q4])
 
-            self.statusBP = True
-            toggleButtons(self)
+        self.statusBP = True
+        toggleButtons(self)
 
     def update_files(self):
         self.update_txt_files()
@@ -143,8 +150,9 @@ class CreateCameras(QWidget):
             os.makedirs(pathData, exist_ok=True)
 
         cameras_txt_filepath = os.path.join(pathData, "cameras.txt")
-        camera_line_template = "{id} PINHOLE 1000 1000 500 500 500 500"
-        camera_lines = "\n".join(camera_line_template.format(id=i + 1) for i in range(num_cameras))
+        imgSize = int(self.imageSize.text())
+        camera_line_template = "{id} PINHOLE {imgSize} {imgSize} 500 500 500 500"
+        camera_lines = "\n".join(camera_line_template.format(id=i + 1, imgSize=imgSize) for i in range(num_cameras))
 
         cameras_content = f"""
 # Camera list with one line of data per camera:
@@ -187,7 +195,8 @@ class CreateCameras(QWidget):
         if not os.path.isdir(pathImage):
             os.makedirs(pathImage, exist_ok=True)
 
-        image = Image.new("RGB", (1000, 1000), (255,0,0))
+        imgSize = int(self.imageSize.text())
+        image = Image.new("RGB", (imgSize, imgSize), (255,0,0))
 
         # Save the image
         image.save(pathImage+"test.jpg")
