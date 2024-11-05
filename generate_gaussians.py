@@ -82,10 +82,10 @@ class GaussianGenerator(QWidget):
         #################################################
 
         # Update button
-        self.buttonGauss = QPushButton("Generate Gaussians")
-        self.buttonGauss.setEnabled(False)
-        self.buttonGauss.clicked.connect(self.update_checkpoint)
-        self.layout.addWidget(self.buttonGauss)
+        self.buttonGenerate = QPushButton("Generate Gaussians")
+        self.buttonGenerate.setEnabled(False)
+        self.buttonGenerate.clicked.connect(self.update_checkpoint)
+        self.layout.addWidget(self.buttonGenerate)
 
         # Set the layout and window title
         self.setLayout(self.layout)

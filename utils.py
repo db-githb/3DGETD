@@ -94,6 +94,7 @@ def toggleButtons(parent, event=None):
         if hasattr(parent, "buttonEnter"): parent.buttonEnter.setEnabled(False)
         if hasattr(parent, "buttonCam"): parent.buttonCam.setEnabled(status)
         if hasattr(parent, "buttonGauss"): parent.buttonGauss.setEnabled(status)
+        if hasattr(parent, "buttonGenerate"): parent.buttonGenerate.setEnabled(status)
         if hasattr(parent, "buttonParams"): parent.buttonParams.setEnabled(True)
         if hasattr(parent, "labelPath"): parent.labelPath.setText(f'Selected Directory: {dirPath}')
     else:
@@ -103,6 +104,7 @@ def toggleButtons(parent, event=None):
             parent.buttonEnter.setEnabled(False)   
         if hasattr(parent, "buttonCam"): parent.buttonCam.setEnabled(False)
         if hasattr(parent, "buttonGauss"): parent.buttonGauss.setEnabled(False)
+        if hasattr(parent, "buttonGenerate"): parent.buttonGenerate.setEnabled(False)
         if hasattr(parent, "buttonParams"): parent.buttonParams.setEnabled(False)
         if hasattr(parent, "labelPath") and parent.__class__.__name__ == "MainWindow": 
             parent.labelPath.setText('No directory selected')
@@ -132,15 +134,15 @@ def savedTimeStamp(parent):
     #parent.labelSaved = QLabel(f"Saved: {dt.datetime.now().strftime('%H:%M:%S %d/%m/%Y')}")
     #parent.labelSaved.setAlignment(Qt.AlignCenter)
     #parent.layout.addWidget(parent.labelSaved)
-    parent.originalText = parent.buttonGauss.text()
-    parent.buttonGauss.setText(f"Saved: {dt.datetime.now().strftime('%H:%M:%S %d/%m/%Y')}")
+    parent.originalText = parent.buttonGenerate.text()
+    parent.buttonGenerate.setText(f"Saved: {dt.datetime.now().strftime('%H:%M:%S %d/%m/%Y')}")
     parent.savedFlag = True
-    parent.buttonGauss.setEnabled(False)
+    parent.buttonGenerate.setEnabled(False)
 
 def removeTimeStamp(parent):
     if parent.savedFlag == True:
         #parent.layout.removeWidget(parent.labelSaved)
         #parent.labelSaved.deleteLater()
         parent.savedFlag = False
-        parent.buttonGauss.setText(parent.originalText)
-        parent.buttonGauss.setEnabled(True)
+        parent.buttonGenerate.setText(parent.originalText)
+        parent.buttonGenerate.setEnabled(True)

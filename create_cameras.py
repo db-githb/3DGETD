@@ -62,10 +62,10 @@ class CreateCameras(QWidget):
         self.layout.addLayout(self.imageSizeLayout)
 
         # Update button
-        self.buttonCam = QPushButton("Create Cameras")
-        self.buttonCam.setEnabled(False)
-        self.buttonCam.clicked.connect(self.update_files)
-        self.layout.addWidget(self.buttonCam)
+        self.buttonGenerate = QPushButton("Create Cameras")
+        self.buttonGenerate.setEnabled(False)
+        self.buttonGenerate.clicked.connect(self.update_files)
+        self.layout.addWidget(self.buttonGenerate)
 
         # Set the main layout
         self.setLayout(self.layout)
@@ -123,13 +123,12 @@ class CreateCameras(QWidget):
         try:
             self.update_txt_files()
             self.create_images()
-            
+            savedTimeStamp(self)
         except Exception as e:
               QMessageBox.critical(None, "Error", f"An error occurred: {e}")
     
     def update_txt_files(self):
         # Get user inputs
-        ns_path = self.pathEntry.text()
         num_cameras = int(self.num_cameras_entry.text())
 
         pos = []
