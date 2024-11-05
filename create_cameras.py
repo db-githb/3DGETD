@@ -91,8 +91,10 @@ class CreateCameras(QWidget):
             self.camera_layout.addWidget(QLabel(f"<b>Camera {i+1}</b>:"), row_offset, 0, 1, 8)
 
             # camera positions
-            self.camera_layout.addWidget(QLabel("position:"), row_offset + 2, 0)
-            p1 = QLineEdit("0")
+            labelCamPos = QLabel("position:")
+            labelCamPos.setToolTip("Camera Position: x y z in world coordinates")
+            self.camera_layout.addWidget(labelCamPos, row_offset + 2, 0)
+            p1 = QLineEdit(str(i*2))
             p2 = QLineEdit("0")
             p3 = QLineEdit("2.0")
             self.camera_layout.addWidget(p1, row_offset + 2, 1)
@@ -101,7 +103,9 @@ class CreateCameras(QWidget):
             self.pos_entries.append([p1, p2, p3])
 
             # camera quats
-            self.camera_layout.addWidget(QLabel("quats:"), row_offset + 4, 0)
+            labelQuat = QLabel("quats:")
+            labelQuat.setToolTip("Quaternions: w x y z\nNote: must be a unit length vector")
+            self.camera_layout.addWidget(labelQuat, row_offset + 4, 0)
             q1 = QLineEdit("-0.707")
             q2 = QLineEdit("0")
             q3 = QLineEdit("0.707")
@@ -172,7 +176,7 @@ class CreateCameras(QWidget):
         # Create a images.txt file if it does't exist
         images_txt_filepath = os.path.join(pathData, "images.txt")
 
-        image_lines_template = "{id}       {q1} {q2} {q3} {q4}       {p1} {p2} {p3}     {id} test.jpg"
+        image_lines_template = "{id}       {q1} {q2} {q3} {q4}       {p1} {p2} {p3}     {id} test.jpg\n"
         image_lines = "\n".join(image_lines_template.format(id=i + 1,
                                                             q1=quats[i][0],
                                                             q2=quats[i][1],
@@ -185,8 +189,8 @@ class CreateCameras(QWidget):
 
         images_content = f"""
 # Image list with two lines of data per image:
-#   IMAGE_ID, QW, QX, QZ, QY, TX, TZ, TY, CAMERA_ID, NAME
-#   POINTS2D[] as (X, Y, POINT3D_ID)
+#  IMAGE_ID, QW, QX, QZ, QY, TX, TZ, TY, CAMERA_ID, NAME
+#  POINTS2D[] as (X, Y, POINT3D_ID)
 # Number of images: {num_cameras}, mean observations per image: 2537.3056478405315
 {image_lines}
         """

@@ -290,7 +290,6 @@ class GaussianGenerator(QWidget):
                     "_model.gauss_params.scales": torch.zeros((num_gaussians, 3), device="cuda")
                 }
             }
-            print("Created a new checkpoint with default values.")
 
         # Update values in checkpoint
         checkpoint["pipeline"]["_model.gauss_params.features_dc"] = torch.tensor(features_dc, device='cuda')
