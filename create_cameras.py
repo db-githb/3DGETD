@@ -73,7 +73,6 @@ class CreateCameras(QWidget):
         # Initialize storage for Camera input fields
         self.pos_entries = []
         self.quats_entries = []
-    
 
     def create_input_fields(self):
         # Clear previous entries if any
