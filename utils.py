@@ -1,4 +1,5 @@
 import os
+import datetime as dt
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QMessageBox, QLineEdit
 
@@ -19,6 +20,7 @@ class CustomLineEdit(QLineEdit):
 
 def userInputLayout(parent, inPath):
     name = parent.name
+    parent.savedFlag = False
     parent.pathRoot = inPath.text()
     parent.pathEntry = QLineEdit()
     parent.pathEntry.setText(parent.pathRoot)
@@ -121,3 +123,9 @@ def checkDirectoryValidity(parent):
                 return
         else:
             return
+
+def savedTimeStamp(parent):
+    parent.labelSaved = QLabel(f"Saved: {dt.datetime.now().strftime('%H:%M:%S %d/%m/%Y')}")
+    parent.labelSaved.setAlignment(Qt.AlignCenter)
+    parent.layout.addWidget(parent.labelSaved)
+    parent.savedFlag = True

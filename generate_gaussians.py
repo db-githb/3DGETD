@@ -1,12 +1,10 @@
-import sys
 import os
 import torch
 import json
-import datetime as dt
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout, QCheckBox
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout, QMessageBox
 )
-from utils import userInputLayout, toggleButtons
+from utils import userInputLayout, toggleButtons, savedTimeStamp
 from yaml_template import getYamlContent
 
 features_rest_1 = torch.tensor([[[ 3.7400e-02,  2.9200e-02,  3.2000e-03],
@@ -254,12 +252,6 @@ class GaussianGenerator(QWidget):
         self.pathData = os.path.join(self.pathCamRoot, self.pathCamDir.text()) #"\n".join("- {dir}".format(dir=i) for i in range(path))
 
         yamlContent = getYamlContent(self.pathDir.text(), self.pathData, os.path.dirname(self.pathEntry.text()))
-
-        # Modify the parameter by searching for the line containing it
-        #for i, line in enumerate(yaml_content):
-        #    if line.startswith(parameter_to_change + ':'):
-        #        yaml_content[i] = f'{parameter_to_change}: {new_value}\n'
-        #        break
         
         # Write the YAML string to a file - don't need to explicitly close the file, it is automatically closed when the block ends because of "with"
         with open(config_filepath, 'w') as file:
@@ -308,8 +300,12 @@ class GaussianGenerator(QWidget):
         checkpoint["pipeline"]["_model.gauss_params.scales"] = torch.tensor(scales, device="cuda")
 
         # Save checkpoint
-        torch.save(checkpoint, checkpoint_file) 
-        print("End: SYSTEM TEST DATA " + str(dt.datetime.now().time()))
+        try:
+            torch.save(checkpoint, checkpoint_file)
+            savedTimeStamp(self)
+        except Exception as e:
+              QMessageBox.critical(None, "Error", f"An error occurred: {e}")
+
 
         # points3D isn't actually used for rendering by NS BUT minimum 4 points are needed when loading the model of k-nearest neighbours
         points3D_txt_filepath = os.path.join(self.pathData, "points3D.txt")
