@@ -124,8 +124,23 @@ def checkDirectoryValidity(parent):
         else:
             return
 
+def connectLineEdits(parent):
+    for line_edit in parent.findChildren(QLineEdit):
+        line_edit.textChanged.connect(lambda: removeTimeStamp(parent))
+
 def savedTimeStamp(parent):
-    parent.labelSaved = QLabel(f"Saved: {dt.datetime.now().strftime('%H:%M:%S %d/%m/%Y')}")
-    parent.labelSaved.setAlignment(Qt.AlignCenter)
-    parent.layout.addWidget(parent.labelSaved)
+    #parent.labelSaved = QLabel(f"Saved: {dt.datetime.now().strftime('%H:%M:%S %d/%m/%Y')}")
+    #parent.labelSaved.setAlignment(Qt.AlignCenter)
+    #parent.layout.addWidget(parent.labelSaved)
+    parent.originalText = parent.buttonGauss.text()
+    parent.buttonGauss.setText(f"Saved: {dt.datetime.now().strftime('%H:%M:%S %d/%m/%Y')}")
     parent.savedFlag = True
+    parent.buttonGauss.setEnabled(False)
+
+def removeTimeStamp(parent):
+    if parent.savedFlag == True:
+        #parent.layout.removeWidget(parent.labelSaved)
+        #parent.labelSaved.deleteLater()
+        parent.savedFlag = False
+        parent.buttonGauss.setText(parent.originalText)
+        parent.buttonGauss.setEnabled(True)

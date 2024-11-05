@@ -1,11 +1,11 @@
 import os
 from random import randint
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QScrollArea, QGridLayout, QMessageBox
 )
 import numpy as np
 from PIL import Image
-from utils import userInputLayout, toggleButtons
+from utils import userInputLayout, toggleButtons, connectLineEdits, savedTimeStamp
 # Default custom path
 default_path = "/home/damian/projects/nerfstudio/data/_unit_test/" # "/your/default/path/"  # Replace this with your actual default path
 
@@ -113,12 +113,19 @@ class CreateCameras(QWidget):
             self.camera_layout.addWidget(q4, row_offset + 4, 4)
             self.quats_entries.append([q1, q2, q3, q4])
 
+        connectLineEdits(self)
+        self.adjustSize()
+
         self.statusBP = True
         toggleButtons(self)
 
     def update_files(self):
-        self.update_txt_files()
-        self.create_images()
+        try:
+            self.update_txt_files()
+            self.create_images()
+            
+        except Exception as e:
+              QMessageBox.critical(None, "Error", f"An error occurred: {e}")
     
     def update_txt_files(self):
         # Get user inputs

@@ -4,7 +4,7 @@ import json
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout, QMessageBox
 )
-from utils import userInputLayout, toggleButtons, savedTimeStamp
+from utils import userInputLayout, toggleButtons, connectLineEdits, savedTimeStamp
 from yaml_template import getYamlContent
 
 features_rest_1 = torch.tensor([[[ 3.7400e-02,  2.9200e-02,  3.2000e-03],
@@ -202,17 +202,12 @@ class GaussianGenerator(QWidget):
             # self.gaussian_layout.addWidget(QLabel("Note: e^(scale)"), row_offset + 5, 4)
             self.scales_entries.append([s1, s2, s3])
 
-        self.connectLineEdits()
+        connectLineEdits(self)
         self.adjustSize()
 
         # Let enable buttonGauss now that default param values are loaded
         self.statusBP = True
         toggleButtons(self)
-
-    def connectLineEdits(self):
-        for line_edit in self.findChildren(QLineEdit):
-            line_edit.textChanged.connect(self.removeTimeStamp)
-
 
     def update_checkpoint(self):
         # Get user inputs
@@ -305,14 +300,6 @@ class GaussianGenerator(QWidget):
         checkpoint["pipeline"]["_model.gauss_params.quats"] = torch.tensor(quats, device="cuda")
         checkpoint["pipeline"]["_model.gauss_params.scales"] = torch.tensor(scales, device="cuda")
 
-        # Save checkpoint
-        try:
-            torch.save(checkpoint, checkpoint_file)
-            savedTimeStamp(self)
-        except Exception as e:
-              QMessageBox.critical(None, "Error", f"An error occurred: {e}")
-
-
         # points3D isn't actually used for rendering by NS BUT minimum 4 points are needed when loading the model of k-nearest neighbours
         points3D_txt_filepath = os.path.join(self.pathData, "points3D.txt")
 
@@ -340,12 +327,13 @@ class GaussianGenerator(QWidget):
 {point_lines}
         """
 
-        with open(points3D_txt_filepath, 'w') as file:
-            file.write(cameras_content)
+        # Save files
+        try:
+            torch.save(checkpoint, checkpoint_file)
+            with open(points3D_txt_filepath, 'w') as file:
+                file.write(cameras_content)
+            savedTimeStamp(self)
+        except Exception as e:
+              QMessageBox.critical(None, "Error", f"An error occurred: {e}")
 
-    def removeTimeStamp(self):
-        if self.savedFlag == True:
-            self.layout.removeWidget(self.labelSaved)
-            self.labelSaved.deleteLater()
-            self.labelSaved = None
-            self.savedFlag = False
+    
