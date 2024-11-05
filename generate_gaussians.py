@@ -202,11 +202,17 @@ class GaussianGenerator(QWidget):
             # self.gaussian_layout.addWidget(QLabel("Note: e^(scale)"), row_offset + 5, 4)
             self.scales_entries.append([s1, s2, s3])
 
+        self.connectLineEdits()
         self.adjustSize()
 
         # Let enable buttonGauss now that default param values are loaded
         self.statusBP = True
         toggleButtons(self)
+
+    def connectLineEdits(self):
+        for line_edit in self.findChildren(QLineEdit):
+            line_edit.textChanged.connect(self.removeTimeStamp)
+
 
     def update_checkpoint(self):
         # Get user inputs
@@ -336,3 +342,10 @@ class GaussianGenerator(QWidget):
 
         with open(points3D_txt_filepath, 'w') as file:
             file.write(cameras_content)
+
+    def removeTimeStamp(self):
+        if self.savedFlag == True:
+            self.layout.removeWidget(self.labelSaved)
+            self.labelSaved.deleteLater()
+            self.labelSaved = None
+            self.savedFlag = False
