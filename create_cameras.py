@@ -92,7 +92,7 @@ class CreateCameras(QWidget):
 
             # camera positions
             labelCamPos = QLabel("position:")
-            labelCamPos.setToolTip("Camera Position: x y z in world coordinates")
+            labelCamPos.setToolTip("Camera Position: x y z")
             self.camera_layout.addWidget(labelCamPos, row_offset + 2, 0)
             p1 = QLineEdit(str(i*2))
             p2 = QLineEdit("0")
@@ -104,16 +104,16 @@ class CreateCameras(QWidget):
 
             # camera quats
             labelQuat = QLabel("quats:")
-            labelQuat.setToolTip("Quaternions: w x y z\nNote: must be a unit length vector")
+            labelQuat.setToolTip("Quaternions: x y z w\nNote: must be a unit length vector")
             self.camera_layout.addWidget(labelQuat, row_offset + 4, 0)
-            qw = QLineEdit("0.707")
             qx = QLineEdit("0")
             qy = QLineEdit("-0.707")
             qz = QLineEdit("0")
-            self.camera_layout.addWidget(qw, row_offset + 4, 1)
-            self.camera_layout.addWidget(qx, row_offset + 4, 2)
-            self.camera_layout.addWidget(qy, row_offset + 4, 3)
-            self.camera_layout.addWidget(qz, row_offset + 4, 4)
+            qw = QLineEdit("0.707")
+            self.camera_layout.addWidget(qx, row_offset + 4, 1)
+            self.camera_layout.addWidget(qy, row_offset + 4, 2)
+            self.camera_layout.addWidget(qz, row_offset + 4, 3)
+            self.camera_layout.addWidget(qw, row_offset + 4, 4)
             self.quats_entries.append([qw, qx, qy, qz])
 
         connectLineEdits(self)

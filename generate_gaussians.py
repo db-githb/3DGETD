@@ -179,17 +179,17 @@ class GaussianGenerator(QWidget):
 
             # quats
             labelQuats = QLabel("quats:")
-            labelQuats.setToolTip("Quaternions: w x y z\nNote: must be a unit length vector")
+            labelQuats.setToolTip("Quaternions: x y z w\nNote: must be a unit length vector")
             self.gaussian_layout.addWidget(labelQuats, row_offset + 4, 0)
-            qu1 = QLineEdit("1")
-            qu2 = QLineEdit("0")
-            qu3 = QLineEdit("0")
-            qu4 = QLineEdit("0")
-            self.gaussian_layout.addWidget(qu1, row_offset + 4, 1)
-            self.gaussian_layout.addWidget(qu2, row_offset + 4, 2)
-            self.gaussian_layout.addWidget(qu3, row_offset + 4, 3)
-            self.gaussian_layout.addWidget(qu4, row_offset + 4, 4)
-            self.quats_entries.append([qu1, qu2, qu3, qu4])
+            qx = QLineEdit("0")
+            qy = QLineEdit("0")
+            qz = QLineEdit("0")
+            qw = QLineEdit("1")
+            self.gaussian_layout.addWidget(qx, row_offset + 4, 1)
+            self.gaussian_layout.addWidget(qy, row_offset + 4, 2)
+            self.gaussian_layout.addWidget(qz, row_offset + 4, 3)
+            self.gaussian_layout.addWidget(qw, row_offset + 4, 4)
+            self.quats_entries.append([qw, qx, qy, qz])
 
             # scales
             self.gaussian_layout.addWidget(QLabel("scales:"), row_offset + 5, 0)
