@@ -56,6 +56,7 @@ class CreateCameras(QWidget):
 
         self.imageSizeLayout = QHBoxLayout()
         labelImageSize = QLabel("Image Size:")
+        labelImageSize.setToolTip("Image is square.  Value is height and width")
         self.imageSize = QLineEdit("1000")
         self.imageSizeLayout.addWidget(labelImageSize)
         self.imageSizeLayout.addWidget(self.imageSize)
