@@ -172,7 +172,9 @@ class GaussianGenerator(QWidget):
             self.means_entries.append([me1, me2, me3])
 
             # opacities
-            self.gaussian_layout.addWidget(QLabel("opacity:"), row_offset + 3, 0)
+            labelOp = QLabel("opacity:")
+            labelOp.setToolTip("Note: Splatfacto activation function uses Sigmoid(opacity value)")
+            self.gaussian_layout.addWidget(labelOp, row_offset + 3, 0)
             op = QLineEdit("1")
             self.gaussian_layout.addWidget(op, row_offset + 3, 1)
             self.opacity_entries.append(op)
@@ -192,7 +194,9 @@ class GaussianGenerator(QWidget):
             self.quats_entries.append([qw, qx, qy, qz])
 
             # scales
-            self.gaussian_layout.addWidget(QLabel("scales:"), row_offset + 5, 0)
+            labelScale = QLabel("scales:")
+            labelScale.setToolTip("Note: Splatfacto activation function uses e^(scale value)")
+            self.gaussian_layout.addWidget(labelScale, row_offset + 5, 0)
             s1 = QLineEdit("0")
             s2 = QLineEdit("0")
             s3 = QLineEdit("0")
