@@ -82,6 +82,11 @@ class CreateCameras(QWidget):
             if widget_to_remove is not None:
                 widget_to_remove.deleteLater()
 
+        pathData = self.pathEntry.text()
+        images_txt_filepath = os.path.join(pathData, "images.txt")
+        if os.path.exists(images_txt_filepath):
+            dataCam = self.getDataCam(images_txt_filepath)
+
         num_cameras = int(self.num_cameras_entry.text())
 
         self.pos_entries = []
@@ -95,9 +100,14 @@ class CreateCameras(QWidget):
             labelCamPos = QLabel("position:")
             labelCamPos.setToolTip("Camera Position: x y z")
             self.camera_layout.addWidget(labelCamPos, row_offset + 2, 0)
-            p1 = QLineEdit(str(i*2))
-            p2 = QLineEdit("0")
-            p3 = QLineEdit("2.0")
+            if dataCam is not None and i < self.numExistingCams:
+                p1 = QLineEdit(dataCam[i][1][0])
+                p2 = QLineEdit(dataCam[i][1][1])
+                p3 = QLineEdit(dataCam[i][1][2])
+            else:
+                p1 = QLineEdit(str(i*2))
+                p2 = QLineEdit("0")
+                p3 = QLineEdit("2.0")
             self.camera_layout.addWidget(p1, row_offset + 2, 1)
             self.camera_layout.addWidget(p2, row_offset + 2, 2)
             self.camera_layout.addWidget(p3, row_offset + 2, 3)
@@ -107,10 +117,16 @@ class CreateCameras(QWidget):
             labelQuat = QLabel("quats:")
             labelQuat.setToolTip("Quaternions: x y z w\nNote: must be a unit length vector")
             self.camera_layout.addWidget(labelQuat, row_offset + 4, 0)
-            qx = QLineEdit("0")
-            qy = QLineEdit("-0.707")
-            qz = QLineEdit("0")
-            qw = QLineEdit("0.707")
+            if dataCam is not None and i < self.numExistingCams:
+                qx = QLineEdit(dataCam[i][0][1])
+                qy = QLineEdit(dataCam[i][0][2])
+                qz = QLineEdit(dataCam[i][0][3])
+                qw = QLineEdit(dataCam[i][0][0])
+            else:
+                qx = QLineEdit("0")
+                qy = QLineEdit("-0.707")
+                qz = QLineEdit("0")
+                qw = QLineEdit("0.707")
             self.camera_layout.addWidget(qx, row_offset + 4, 1)
             self.camera_layout.addWidget(qy, row_offset + 4, 2)
             self.camera_layout.addWidget(qz, row_offset + 4, 3)
@@ -123,6 +139,21 @@ class CreateCameras(QWidget):
         self.statusBP = True
         toggleButtons(self)
 
+    def getDataCam(self, images_txt_filepath):
+        dataCam = []
+        with open(images_txt_filepath, "r") as file:
+            while True:
+                line = file.readline()
+                if not line:
+                    break
+                line = line.strip()
+                if len(line) > 0 and line[0] != "#":
+                    elems = line.split()
+                    qw, qx, qy, qz = elems[1:5]
+                    tx, ty, tz = elems[5:8]
+                    dataCam.append([[qw, qx, qy, qz], [tx, ty, tz]])
+        return dataCam
+    
     def update_files(self):
         try:
             self.update_txt_files()
