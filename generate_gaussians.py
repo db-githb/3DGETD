@@ -132,6 +132,13 @@ class GaussianGenerator(QWidget):
         self.quats_entries = []
         self.scales_entries = []
 
+        pathSplatfactoDir = os.path.join(self.pathEntry.text(), "splatfacto")
+        checkpoint_file =  os.path.join(pathSplatfactoDir, "step-000000000.ckpt")
+        if os.path.exists(checkpoint_file):
+            checkpoint = torch.load(checkpoint_file)
+            numExistingGauss = checkpoint["pipeline"]["_model.gauss_params.means"].shape[0]
+
+
         for i in range(num_gaussians):
             row_offset = i * 6  # Space out each Gaussian by 6 rows
             self.gaussian_layout.addWidget(QLabel(f"<b>Gaussian {i+1}</b>:"), row_offset, 0, 1, 8)
@@ -153,7 +160,12 @@ class GaussianGenerator(QWidget):
                 fe1 = QLineEdit("0")
                 fe2 = QLineEdit("0")
                 fe3 = QLineEdit("1")
-            
+            elif checkpoint is not None and i < numExistingGauss:
+                fe = checkpoint["pipeline"]["_model.gauss_params.features_dc"][i]
+                fe1 = QLineEdit(str(fe[0].item()))
+                fe2 = QLineEdit(str(fe[1].item()))
+                fe3 = QLineEdit(str(fe[2].item()))
+
             self.gaussian_layout.addWidget(fe1, row_offset + 1, 1)
             self.gaussian_layout.addWidget(fe2, row_offset + 1, 2)
             self.gaussian_layout.addWidget(fe3, row_offset + 1, 3)
@@ -163,9 +175,15 @@ class GaussianGenerator(QWidget):
             labelMeans = QLabel("means:")
             labelMeans.setToolTip("Means: x y z")
             self.gaussian_layout.addWidget(labelMeans, row_offset + 2, 0)
-            me1 = QLineEdit(str(i*2))
-            me2 = QLineEdit("0")
-            me3 = QLineEdit("0")
+            if checkpoint is not None and i < numExistingGauss:
+                me = checkpoint["pipeline"]["_model.gauss_params.means"][i]
+                me1 = QLineEdit(str(me[0].item()))
+                me2 = QLineEdit(str(me[1].item()))
+                me3 = QLineEdit(str(me[2].item()))
+            else:
+                me1 = QLineEdit(str(i*2))
+                me2 = QLineEdit("0")
+                me3 = QLineEdit("0")
             self.gaussian_layout.addWidget(me1, row_offset + 2, 1)
             self.gaussian_layout.addWidget(me2, row_offset + 2, 2)
             self.gaussian_layout.addWidget(me3, row_offset + 2, 3)
@@ -175,7 +193,11 @@ class GaussianGenerator(QWidget):
             labelOp = QLabel("opacity:")
             labelOp.setToolTip("Note: Splatfacto activation function uses Sigmoid(opacity value)")
             self.gaussian_layout.addWidget(labelOp, row_offset + 3, 0)
-            op = QLineEdit("1")
+            if checkpoint is not None and i < numExistingGauss:
+                alpha = checkpoint["pipeline"]["_model.gauss_params.opacities"][i].item()
+                op = QLineEdit(str(alpha))
+            else:
+                op = QLineEdit("1")
             self.gaussian_layout.addWidget(op, row_offset + 3, 1)
             self.opacity_entries.append(op)
 
@@ -183,10 +205,17 @@ class GaussianGenerator(QWidget):
             labelQuats = QLabel("quats:")
             labelQuats.setToolTip("Quaternions: x y z w\nNote: must be a unit length vector")
             self.gaussian_layout.addWidget(labelQuats, row_offset + 4, 0)
-            qx = QLineEdit("0")
-            qy = QLineEdit("0")
-            qz = QLineEdit("0")
-            qw = QLineEdit("1")
+            if checkpoint is not None and i < numExistingGauss:
+                q = checkpoint["pipeline"]["_model.gauss_params.quats"][i]
+                qx = QLineEdit(str(q[1].item()))
+                qy = QLineEdit(str(q[2].item()))
+                qz = QLineEdit(str(q[3].item()))
+                qw = QLineEdit(str(q[0].item()))
+            else:
+                qx = QLineEdit("0")
+                qy = QLineEdit("0")
+                qz = QLineEdit("0")
+                qw = QLineEdit("1")
             self.gaussian_layout.addWidget(qx, row_offset + 4, 1)
             self.gaussian_layout.addWidget(qy, row_offset + 4, 2)
             self.gaussian_layout.addWidget(qz, row_offset + 4, 3)
@@ -197,9 +226,15 @@ class GaussianGenerator(QWidget):
             labelScale = QLabel("scales:")
             labelScale.setToolTip("Note: Splatfacto activation function uses e^(scale value)")
             self.gaussian_layout.addWidget(labelScale, row_offset + 5, 0)
-            s1 = QLineEdit("0")
-            s2 = QLineEdit("0")
-            s3 = QLineEdit("0")
+            if checkpoint is not None and i < numExistingGauss:
+                s = checkpoint["pipeline"]["_model.gauss_params.scales"][i]
+                s1 = QLineEdit(str(s[0].item()))
+                s2 = QLineEdit(str(s[1].item()))
+                s3 = QLineEdit(str(s[2].item()))
+            else:
+                s1 = QLineEdit("0")
+                s2 = QLineEdit("0")
+                s3 = QLineEdit("0")
             self.gaussian_layout.addWidget(s1, row_offset + 5, 1)
             self.gaussian_layout.addWidget(s2, row_offset + 5, 2)
             self.gaussian_layout.addWidget(s3, row_offset + 5, 3)
