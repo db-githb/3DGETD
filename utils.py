@@ -82,7 +82,7 @@ def setImgSize(parent):
                     break
                 line = line.strip()
                 if len(line) > 0 and line[:-1] == "# Number of cameras: ":
-                    numExistingCam = int(line[-1])
+                    parent.numExistingCam = int(line[-1])
                 elif len(line) > 0 and line[0] != "#":
                     elems = line.split()
                     parent.imageSize.setText(elems[2])
