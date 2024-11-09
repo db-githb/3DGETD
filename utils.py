@@ -46,6 +46,8 @@ def userInputLayout(parent, inPath):
     # Create a button to open the directory dialogpath
     parent.buttonBrowse = QPushButton("Browse")
     parent.buttonBrowse.clicked.connect(lambda: openDirectoryDialog(parent))
+    if name == "Cameras":
+        parent.buttonBrowse.clicked.connect(lambda: setImgSize(parent))
     parent.pathLayout.addWidget(parent.buttonBrowse)
 
     # Create an Enter button for the user to confirm the directory
@@ -68,6 +70,23 @@ def completePath(parent, event=None):
             parent.labelPath.setText(f'Selected Directory: {dirPath}') # full display project path
             
     return dirPath
+
+def setImgSize(parent):
+    pathData = parent.pathEntry.text()
+    if os.path.isdir(pathData):
+        cameras_txt_filepath = os.path.join(pathData, "cameras.txt")
+        with open(cameras_txt_filepath, "r") as file:
+            while True:
+                line = file.readline()
+                if not line:
+                    break
+                line = line.strip()
+                if len(line) > 0 and line[:-1] == "# Number of cameras: ":
+                    numExistingCam = int(line[-1])
+                elif len(line) > 0 and line[0] != "#":
+                    elems = line.split()
+                    parent.imageSize.setText(elems[2])
+                    break # all images should be the same size so only need the one value
 
 def openDirectoryDialog(parent):
     # Open the QFileDialog to select a directory

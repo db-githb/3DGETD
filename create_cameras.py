@@ -190,7 +190,7 @@ class CreateCameras(QWidget):
 
         images_content = f"""
 # Image list with two lines of data per image:
-#  IMAGE_ID, QW, QX, QZ, QY, TX, TZ, TY, CAMERA_ID, NAME
+#  IMAGE_ID, QW, QX, QY, QZ, TX, TZ, TY, CAMERA_ID, NAME
 #  POINTS2D[] as (X, Y, POINT3D_ID)
 # Number of images: {num_cameras}, mean observations per image: 2537.3056478405315
 {image_lines}
