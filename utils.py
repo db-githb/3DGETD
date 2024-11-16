@@ -25,7 +25,7 @@ def userInputLayout(parent, inPath):
     parent.pathEntry = QLineEdit()
     parent.pathEntry.setText(parent.pathRoot)
 
-    # Check if test_models directory exists, if not, create it
+    # Check if check if project subdirectories exists, if not, create it
     if os.path.basename(os.path.normpath(parent.pathRoot)) != subDirDict[name]:
         pathGG = os.path.join(parent.pathRoot, subDirDict[name])
         parent.pathEntry.setText(pathGG)
