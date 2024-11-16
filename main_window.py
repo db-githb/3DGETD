@@ -50,13 +50,11 @@ class MainWindow(QWidget):
         # Option buttons (initially disabled)
         self.buttonCam = QPushButton('Create Cameras', self)
         self.buttonCam.setEnabled(False)
-        self.buttonCam.clicked.connect(lambda: checkDirectoryValidity(self))
         self.buttonCam.clicked.connect(self.show_cam_window)
         self.layout.addWidget(self.buttonCam)
 
         self.buttonGauss = QPushButton('Generate Gaussians', self)
         self.buttonGauss.setEnabled(False)
-        self.buttonGauss.clicked.connect(lambda: checkDirectoryValidity(self))
         self.buttonGauss.clicked.connect(self.show_gauss_window)
         self.layout.addWidget(self.buttonGauss)
 

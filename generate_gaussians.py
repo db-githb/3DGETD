@@ -4,7 +4,7 @@ import json
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout, QMessageBox
 )
-from utils import userInputLayout, toggleButtons, connectLineEdits, savedTimeStamp
+from utils import userInputLayout, toggleButtons, connectLineEdits, savedTimeStamp, checkProjSubDirValidity
 from yaml_template import getYamlContent
 
 features_rest_1 = torch.tensor([[[ 3.7400e-02,  2.9200e-02,  3.2000e-03],
@@ -64,7 +64,8 @@ class GaussianGenerator(QWidget):
         ############ CAMERA SELECTION ####################
         self.statusCam = False
         self.pathCamRoot =  os.path.join(inPath.text(), "data")
-        os.makedirs(self.pathCamRoot, exist_ok=True)
+        if not os.path.exists(self.pathCamRoot):
+            checkProjSubDirValidity(self, self.pathCamRoot)
         
         # Path selection
         self.pathCamLayout = QHBoxLayout()
@@ -360,7 +361,7 @@ class GaussianGenerator(QWidget):
         
         cameras_content = f"""
 # 3D point list with one line of data per point:
-#   POINT3D_ID, X, Y, Z, R, G, B, ERROR, TRACK[] as (IMAGE_ID, POINT2D_IDX)
+# POINT3D_ID, X, Y, Z, R, G, B, ERROR, TRACK[] as (IMAGE_ID, POINT2D_IDX)
 # Number of points: {num_points}, mean track length: 3.3334
 {point_lines}
         """

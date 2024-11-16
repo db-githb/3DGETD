@@ -56,7 +56,7 @@ class CreateCameras(QWidget):
 
         self.imageSizeLayout = QHBoxLayout()
         labelImageSize = QLabel("Image Size:")
-        labelImageSize.setToolTip("Image is square.  Value is height and width")
+        labelImageSize.setToolTip("Image is a square.\nValue is height and width.\nFocal Length = (Image size/2), 90 deg FOV.")
         self.imageSize = QLineEdit("1000")
         self.imageSizeLayout.addWidget(labelImageSize)
         self.imageSizeLayout.addWidget(self.imageSize)
@@ -192,8 +192,9 @@ class CreateCameras(QWidget):
 
         cameras_txt_filepath = os.path.join(pathData, "cameras.txt")
         imgSize = int(self.imageSize.text())
-        camera_line_template = "{id} PINHOLE {imgSize} {imgSize} 500 500 500 500"
-        camera_lines = "\n".join(camera_line_template.format(id=i + 1, imgSize=imgSize) for i in range(num_cameras))
+        focalLength = imgSize/2
+        camera_line_template = "{id} PINHOLE {imgSize} {imgSize} {focalLength} {focalLength} {focalLength} {focalLength}"
+        camera_lines = "\n".join(camera_line_template.format(id=i + 1, imgSize=imgSize, focalLength=focalLength) for i in range(num_cameras))
 
         cameras_content = f"""
 # Camera list with one line of data per camera:
