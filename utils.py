@@ -3,7 +3,7 @@ import datetime as dt
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QMessageBox, QLineEdit
 
-subDirDict = {"Experiment": "models", "Cameras": "data"}
+subDirLst = ["models", "data"]
 
 class CustomLineEdit(QLineEdit):
     def __init__(self, *args, **kwargs):
@@ -25,39 +25,36 @@ def userInputLayout(parent, inPath):
     parent.pathEntry = QLineEdit()
     parent.pathEntry.setText(parent.pathRoot)
 
-    # Check if check if project subdirectories exists, if not, create it
-    full_paths = [os.path.join(parent.pathRoot, subdir) for subdir in subDirDict.values()]
-    # Check if all required subdirectories exist
-    path_flag = {path: os.path.isdir(path) for path in full_paths}
-    if list(path_flag.values())[0] and list(path_flag.values())[1]:
-        reply = QMessageBox.question(parent, 'Create Subdirectory', f'Model and Data subdirectores do not exist. Do you want to create them?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if reply == QMessageBox.Yes:
-            for key in path_flag.keys():
-                try:
-                    os.makedirs(key, exist_ok=True)
-                except Exception as e:
-                    QMessageBox.warning(parent, 'Invalid Directory', f'Could not create the directory: {e}')
-                    #return
-    elif not list(path_flag.values())[0]:
-        reply = QMessageBox.question(parent, 'Create Subdirectory', f'Models subdirectory does not exist. Do you want to create it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if reply == QMessageBox.Yes:
-            for key in path_flag.keys():
-                try:
-                    os.makedirs(key, exist_ok=True)
-                except Exception as e:
-                    QMessageBox.warning(parent, 'Invalid Directory', f'Could not create the directory: {e}')
-                    #return
-    elif not list(path_flag.values())[1]:
-        reply = QMessageBox.question(parent, 'Create Subdirectory', f'Data subdirectory does not exist. Do you want to create it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if reply == QMessageBox.Yes:
-            for key in path_flag.keys():
-                try:
-                    os.makedirs(key, exist_ok=True)
-                except Exception as e:
-                    QMessageBox.warning(parent, 'Invalid Directory', f'Could not create the directory: {e}')
-                    #return
+    # Generate full paths for the subdirectories
+    full_paths = {subDir: os.path.join(parent.pathRoot, subDir) for subDir in subDirLst}
 
-    
+    # Check which paths do not exist
+    missing_dirs = {subDir: path for subDir, path in full_paths.items() if not os.path.isdir(path)}
+
+    if missing_dirs:
+        # Create a message listing all missing directories
+        missing_str = ", ".join(missing_dirs.keys())
+        missing_list = ''.join(f'<li>{item}</li>' for item in missing_str.split(','))
+        reply = QMessageBox.question(parent,
+                                    'Create Subdirectory',
+                                    f'The following subdirectories do not exist:'
+                                    f'<div style="text-align: center;"><ul style="text-align: left;">{missing_list}</ul></div>'
+                                    f'Do you want to create them?</div>',
+                                    QMessageBox.Yes | QMessageBox.No,
+                                    QMessageBox.No
+                                )
+
+        if reply == QMessageBox.Yes:
+            for name, path in missing_dirs.items():
+                try:
+                    os.makedirs(path, exist_ok=True)
+                except Exception as e:
+                    QMessageBox.warning(
+                        parent,
+                        'Invalid Directory',
+                        f'Could not create the "{name}" directory: {e}'
+                    )
+
     # Path selection
     parent.pathLayout = QHBoxLayout()
     parent.labelExp = QLabel(f"{name} Name: ")
