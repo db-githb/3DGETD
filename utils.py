@@ -41,7 +41,7 @@ def userInputLayout(parent, inPath):
     elif not list(path_flag.values())[0]:
         reply = QMessageBox.question(parent, 'Create Subdirectory', f'Models subdirectory does not exist. Do you want to create it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
-            for key in list(path_flag.keys())[0]:
+            for key in path_flag.keys():
                 try:
                     os.makedirs(key, exist_ok=True)
                 except Exception as e:
@@ -50,7 +50,7 @@ def userInputLayout(parent, inPath):
     elif not list(path_flag.values())[1]:
         reply = QMessageBox.question(parent, 'Create Subdirectory', f'Data subdirectory does not exist. Do you want to create it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
-            for key in list(path_flag.keys())[1]:
+            for key in path_flag.keys():
                 try:
                     os.makedirs(key, exist_ok=True)
                 except Exception as e:
