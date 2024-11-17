@@ -26,13 +26,38 @@ def userInputLayout(parent, inPath):
     parent.pathEntry.setText(parent.pathRoot)
 
     # Check if check if project subdirectories exists, if not, create it
-    if os.path.basename(os.path.normpath(parent.pathRoot)) != subDirDict[name]:
-        pathGG = os.path.join(parent.pathRoot, subDirDict[name])
-        parent.pathEntry.setText(pathGG)
-        parent.pathRoot = pathGG
-        if not os.path.exists(pathGG):
-          checkProjSubDirValidity(parent, pathGG)
+    full_paths = [os.path.join(parent.pathRoot, subdir) for subdir in subDirDict.values()]
+    # Check if all required subdirectories exist
+    path_flag = {path: os.path.isdir(path) for path in full_paths}
+    if list(path_flag.values())[0] and list(path_flag.values())[1]:
+        reply = QMessageBox.question(parent, 'Create Subdirectory', f'Model and Data subdirectores do not exist. Do you want to create them?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            for key in path_flag.keys():
+                try:
+                    os.makedirs(key, exist_ok=True)
+                except Exception as e:
+                    QMessageBox.warning(parent, 'Invalid Directory', f'Could not create the directory: {e}')
+                    #return
+    elif not list(path_flag.values())[0]:
+        reply = QMessageBox.question(parent, 'Create Subdirectory', f'Models subdirectory does not exist. Do you want to create it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            for key in list(path_flag.keys())[0]:
+                try:
+                    os.makedirs(key, exist_ok=True)
+                except Exception as e:
+                    QMessageBox.warning(parent, 'Invalid Directory', f'Could not create the directory: {e}')
+                    #return
+    elif not list(path_flag.values())[1]:
+        reply = QMessageBox.question(parent, 'Create Subdirectory', f'Data subdirectory does not exist. Do you want to create it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            for key in list(path_flag.keys())[1]:
+                try:
+                    os.makedirs(key, exist_ok=True)
+                except Exception as e:
+                    QMessageBox.warning(parent, 'Invalid Directory', f'Could not create the directory: {e}')
+                    #return
 
+    
     # Path selection
     parent.pathLayout = QHBoxLayout()
     parent.labelExp = QLabel(f"{name} Name: ")
