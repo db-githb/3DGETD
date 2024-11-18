@@ -37,23 +37,34 @@ def userInputLayout(parent, inPath):
         missing_list = ''.join(f'<li>{item}</li>' for item in missing_str.split(','))
         reply = QMessageBox.question(parent,
                                     'Create Subdirectory',
-                                    f'The following subdirectories do not exist:'
+                                    f'The directory:<br>'
+                                    f'<br>{parent.pathRoot}<br><br>'
+                                    f'does not have the following subdirectories:'
                                     f'<div style="text-align: center;"><ul style="text-align: left;">{missing_list}</ul></div>'
                                     f'Do you want to create them?</div>',
                                     QMessageBox.Yes | QMessageBox.No,
                                     QMessageBox.No
                                 )
 
+        # Create Directories
         if reply == QMessageBox.Yes:
-            for name, path in missing_dirs.items():
+            for dirs, path in missing_dirs.items():
                 try:
                     os.makedirs(path, exist_ok=True)
                 except Exception as e:
                     QMessageBox.warning(
                         parent,
                         'Invalid Directory',
-                        f'Could not create the "{name}" directory: {e}'
+                        f'Could not create the "{dirs}" directory: {e}'
                     )
+
+    # set pathEntry to models to ensure that browse opens to correct location
+    if parent.name == "Experiment":
+        parent.pathEntry.setText(os.path.join(parent.pathRoot, "models"))
+        parent.pathRoot = parent.pathEntry.text()
+    else:
+        parent.pathEntry.setText(os.path.join(parent.pathRoot, "data"))
+        parent.pathRoot = parent.pathEntry.text()
 
     # Path selection
     parent.pathLayout = QHBoxLayout()
@@ -83,7 +94,6 @@ def userInputLayout(parent, inPath):
     parent.layout.addWidget(parent.labelPath)
 
 def completePath(parent, event=None):
-    # pathEntry maintains root project path
     dirPath = parent.pathEntry.text()
     if hasattr(parent, "pathDir"): # non-main_windows have pathDir attributes
             # add user input to root project path

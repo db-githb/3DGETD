@@ -86,6 +86,8 @@ class CreateCameras(QWidget):
         images_txt_filepath = os.path.join(pathData, "images.txt")
         if os.path.exists(images_txt_filepath):
             dataCam = self.getDataCam(images_txt_filepath)
+        else:
+            dataCam = None
 
         num_cameras = int(self.num_cameras_entry.text())
 
