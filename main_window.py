@@ -65,12 +65,22 @@ class MainWindow(QWidget):
     def show_cam_window(self):
         if self.widgetCam is None:
             self.widgetCam = CreateCameras(self.pathEntry)
-        self.widgetCam.show()
+            if self.widgetCam.showWindow:     
+                self.widgetCam.show()
+            else:
+                self.widgetCam = None
+        else:  
+            self.widgetCam.show()
     
     def show_gauss_window(self):
         if self.widgetGauss is None:
-            self.widgetGauss = GaussianGenerator(self.pathEntry)   
-        self.widgetGauss.show()
+            self.widgetGauss = GaussianGenerator(self.pathEntry)
+            if self.widgetGauss.showWindow:     
+                self.widgetGauss.show()
+            else:
+                self.widgetGauss = None
+        else:     
+            self.widgetGauss.show()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

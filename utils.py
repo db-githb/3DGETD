@@ -61,7 +61,7 @@ def userInputLayout(parent, inPath):
                         f'Could not create the "{dirs}" directory: {e}'
                     )
         else:
-            # NEED TO FIFURE OUT HOW TO STOP LOADING THE WINDOW
+            parent.showWindow = False
             return
 
     # set pathEntry to models to ensure that browse opens to correct location
@@ -98,6 +98,8 @@ def userInputLayout(parent, inPath):
     # Display full directory path for experiment
     parent.labelPath = QLabel(f'Selected Directory: {parent.pathEntry.text()}')
     parent.layout.addWidget(parent.labelPath)
+
+    parent.showWindow = True # set flag during initialization so that values persist after window is closed
 
 def completePath(parent, event=None):
     dirPath = parent.pathEntry.text()
