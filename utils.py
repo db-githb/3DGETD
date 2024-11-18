@@ -25,10 +25,13 @@ def userInputLayout(parent, inPath):
     parent.pathEntry = QLineEdit()
     parent.pathEntry.setText(parent.pathRoot)
 
-    # Generate full paths for the subdirectories
-    full_paths = {subDir: os.path.join(parent.pathRoot, subDir) for subDir in subDirLst}
+    # Generate full paths for the subdirectories depending on which window is being generated
+    if name == "Experiment":
+        full_paths = {subDir: os.path.join(parent.pathRoot, subDir) for subDir in subDirLst}
+    else:
+        full_paths = {subDirLst[1]: os.path.join(parent.pathRoot, subDirLst[1])}
 
-    # Check which paths do not exist
+    # Check which paths do not exist - don't worry about models subdir when creating cameras
     missing_dirs = {subDir: path for subDir, path in full_paths.items() if not os.path.isdir(path)}
 
     if missing_dirs:
