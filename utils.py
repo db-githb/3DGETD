@@ -60,6 +60,9 @@ def userInputLayout(parent, inPath):
                         'Invalid Directory',
                         f'Could not create the "{dirs}" directory: {e}'
                     )
+        else:
+            # NEED TO FIFURE OUT HOW TO STOP LOADING THE WINDOW
+            return
 
     # set pathEntry to models to ensure that browse opens to correct location
     if parent.name == "Experiment":
@@ -164,19 +167,6 @@ def toggleButtons(parent, event=None):
             parent.labelPath.setText('No directory selected')
         # reset buttonParam status
         if hasattr(parent, "statusBP"): parent.statusBP = False
-
-def checkProjSubDirValidity(parent, inPath):
-    dir_path = inPath
-    if not dir_path or not os.path.isdir(dir_path):
-        reply = QMessageBox.question(parent, 'Create Subdirectory', f'The subdirectory "{dir_path}" does not exist. Do you want to create it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if reply == QMessageBox.Yes:
-            try:
-                os.makedirs(dir_path, exist_ok=True)
-            except Exception as e:
-                QMessageBox.warning(parent, 'Invalid Directory', f'Could not create the directory: {e}')
-                return
-        else:
-            return
 
 def checkDirectoryValidity(parent):
     # Check if the directory exists and ask the user if they want to create it if it doesn't

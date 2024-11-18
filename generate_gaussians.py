@@ -4,7 +4,7 @@ import json
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout, QMessageBox
 )
-from utils import userInputLayout, toggleButtons, connectLineEdits, savedTimeStamp, checkProjSubDirValidity
+from utils import userInputLayout, toggleButtons, connectLineEdits, savedTimeStamp
 from yaml_template import getYamlContent
 
 features_rest_1 = torch.tensor([[[ 3.7400e-02,  2.9200e-02,  3.2000e-03],
@@ -64,9 +64,8 @@ class GaussianGenerator(QWidget):
         ############ CAMERA SELECTION ####################
         self.statusCam = False
         self.pathCamRoot =  os.path.join(inPath.text(), "data")
-        if not os.path.exists(self.pathCamRoot):
-            checkProjSubDirValidity(self, self.pathCamRoot)
-        
+        #if not os.path.exists(self.pathCamRoot):
+
         # Path selection
         self.pathCamLayout = QHBoxLayout()
         self.labelCamDir = QLabel("Select Cameras: ")
