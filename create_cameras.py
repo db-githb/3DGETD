@@ -85,7 +85,7 @@ class CreateCameras(QWidget):
         pathData = self.pathEntry.text()
         images_txt_filepath = os.path.join(pathData, "images.txt")
         if os.path.exists(images_txt_filepath):
-            dataCam = self.getDataCam(images_txt_filepath)
+            dataCam, numExistingCams = self.getDataCam(images_txt_filepath)
         else:
             dataCam = None
 
@@ -102,7 +102,7 @@ class CreateCameras(QWidget):
             labelCamPos = QLabel("position:")
             labelCamPos.setToolTip("Camera Position: x y z")
             self.camera_layout.addWidget(labelCamPos, row_offset + 2, 0)
-            if dataCam is not None and i < self.numExistingCams:
+            if dataCam is not None and i < numExistingCams:
                 p1 = QLineEdit(dataCam[i][1][0])
                 p2 = QLineEdit(dataCam[i][1][1])
                 p3 = QLineEdit(dataCam[i][1][2])
@@ -119,7 +119,7 @@ class CreateCameras(QWidget):
             labelQuat = QLabel("quats:")
             labelQuat.setToolTip("Quaternions: x y z w\nNote: must be a unit length vector")
             self.camera_layout.addWidget(labelQuat, row_offset + 4, 0)
-            if dataCam is not None and i < self.numExistingCams:
+            if dataCam is not None and i < numExistingCams:
                 qx = QLineEdit(dataCam[i][0][1])
                 qy = QLineEdit(dataCam[i][0][2])
                 qz = QLineEdit(dataCam[i][0][3])
@@ -149,12 +149,14 @@ class CreateCameras(QWidget):
                 if not line:
                     break
                 line = line.strip()
+                if line.startswith("# Number of images: "):
+                    num_images = int(line.split(":")[1].split(",")[0].strip())
                 if len(line) > 0 and line[0] != "#":
                     elems = line.split()
                     qw, qx, qy, qz = elems[1:5]
                     tx, ty, tz = elems[5:8]
                     dataCam.append([[qw, qx, qy, qz], [tx, ty, tz]])
-        return dataCam
+        return dataCam, num_images
     
     def update_files(self):
         try:
