@@ -13,14 +13,16 @@
 
 ## 🔧 Installation
 
-### Executables
+This project provides precompiled executables for quick and easy use on major platforms, as well as the option to clone and install the repository locally for customization or development. Choose the method that best fits your needs! Detailed instructions for both approaches are provided below.
+
+### ⚙️ Executables
 
 For users who want a quick way to generate synthetic data without setting up the full environment, precompiled executables are provided for Linux and Windows:
 
 - **Linux** 
 - **Windows**
 
-### Cloning and Installing Repo
+### 🛠️ Cloning and Installing Repo
 
 #### Prerequisites
 
@@ -34,7 +36,7 @@ For users who want a quick way to generate synthetic data without setting up the
 
 ## 📖 Usage
 
-### Directory Structure
+### Directory Structure 📂
 ---
 ## 📜 License
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
