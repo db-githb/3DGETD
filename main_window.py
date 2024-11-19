@@ -14,6 +14,7 @@ class MainWindow(QWidget):
     def initUI(self):
         self.widgetCam = None
         self.widgetGauss = None
+        self.widget = None
 
         # Set up the main layout
         self.layout = QVBoxLayout()
@@ -50,17 +51,42 @@ class MainWindow(QWidget):
         # Option buttons (initially disabled)
         self.buttonCam = QPushButton('Create Cameras', self)
         self.buttonCam.setEnabled(False)
-        self.buttonCam.clicked.connect(self.show_cam_window)
+        self.buttonCam.clicked.connect(self.dispWindow)
         self.layout.addWidget(self.buttonCam)
 
         self.buttonGauss = QPushButton('Generate Gaussians', self)
         self.buttonGauss.setEnabled(False)
-        self.buttonGauss.clicked.connect(self.show_gauss_window)
+        self.buttonGauss.clicked.connect(self.dispWindow)
         self.layout.addWidget(self.buttonGauss)
 
         # Set the layout and window title
         self.setLayout(self.layout)
         self.setWindowTitle("3D Gaussian Generator")
+
+    def dispWindow(self):
+        # Dictionary mapping button text to window creation functions
+        windowDict = {
+            "Generate Gaussians": lambda: GaussianGenerator(self.pathEntry),
+            "Create Cameras": lambda: CreateCameras(self.pathEntry)
+        }
+
+        # Retrieve the button text
+        button = self.sender().text()
+
+        # Initialize a dictionary to track active windows if it doesn't exist
+        if not hasattr(self, 'activeWidgets'):
+            self.activeWindows = {}
+
+        # Check if the window corresponding to the button is already instantiated
+        if button not in self.activeWindows or self.activeWindows[button] is None:
+            # Instantiate the window and store it in the activeWidgets dictionary
+            widget = windowDict[button]()
+            if widget.showWindow:  # Check if window object was created
+                widget.show()
+                self.activeWindows[button] = widget
+        else:
+            # If the window already exists, bring it to the foreground
+            self.activeWindows[button].show()
 
     def show_cam_window(self):
         if self.widgetCam is None:
