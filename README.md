@@ -6,8 +6,9 @@
 
 ## 🚀 Features
 
-- Define and edit the number of cameras as well as their position and rotation parameters
-- Define and edit the number of 3D Gaussians as well as their base color, position, rotation, and scale
+**Flexible Camera Configuration**: Easily define and adjust the number of cameras, along with their position and rotation parameters, to fit your setup.
+
+**Customizable 3D Gaussians**: Configure the number of 3D Gaussians and customize their base color, position, rotation, and scale for precise control over the 3D scene.
 
 ---
 
@@ -36,7 +37,17 @@ For users who want a quick way to generate synthetic data without setting up the
 
 ## 📖 Usage
 
-### Directory Structure 📂
+### 📂 Directory Structure
+
+The generation of 3D Gaussians requires a data and models subdirectory underneath your project directory:
+
+```
+<your-project>/
+├─ <data>/
+├─ <models>/
+```
+If these subdirectories do not exist, you will be prompted to create them.
+
 ---
 ## 📜 License
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
