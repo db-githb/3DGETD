@@ -113,8 +113,8 @@ def completePath(parent, event=None):
 
 def setImgSize(parent):
     pathData = parent.pathEntry.text()
-    if os.path.isdir(pathData):
-        cameras_txt_filepath = os.path.join(pathData, "cameras.txt")
+    cameras_txt_filepath = os.path.join(pathData, "cameras.txt")
+    if os.path.exists(cameras_txt_filepath):
         with open(cameras_txt_filepath, "r") as file:
             while True:
                 line = file.readline()
@@ -123,9 +123,11 @@ def setImgSize(parent):
                 line = line.strip()
                 if len(line) > 0 and line[:-1] == "# Number of cameras: ":
                     parent.numExistingCams = int(line[-1])
+                    parent.num_cameras_entry.setText(str(parent.numExistingCams))
                 elif len(line) > 0 and line[0] != "#":
                     elems = line.split()
-                    parent.imageSize.setText(elems[2])
+                    parent.imageWidth.setText(str(elems[2:3][0]))
+                    parent.imageHeight.setText(str(elems[3:4][0]))
                     break # all images should be the same size so only need the one value
 
 def openDirectoryDialog(parent):

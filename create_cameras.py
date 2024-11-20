@@ -56,10 +56,16 @@ class CreateCameras(QWidget):
 
         self.imageSizeLayout = QHBoxLayout()
         labelImageSize = QLabel("Image Size:")
-        labelImageSize.setToolTip("Image is a square.\nValue is height and width.\nFocal Length = (Image size/2), 90 deg FOV.")
-        self.imageSize = QLineEdit("1000")
+        labelImageSize.setToolTip("Simple Pinhole camera:\nPrincipal Points = (0,0),\nFocal Length=(Width x Height)/2.")
+        labelImageWidth = QLabel("Width =")
+        self.imageWidth = QLineEdit("100")
+        labelImageHeight = QLabel("Height =")
+        self.imageHeight = QLineEdit("100")
         self.imageSizeLayout.addWidget(labelImageSize)
-        self.imageSizeLayout.addWidget(self.imageSize)
+        self.imageSizeLayout.addWidget(labelImageWidth)
+        self.imageSizeLayout.addWidget(self.imageWidth)
+        self.imageSizeLayout.addWidget(labelImageHeight)
+        self.imageSizeLayout.addWidget(self.imageHeight)
         self.layout.addLayout(self.imageSizeLayout)
 
         # Update button
@@ -195,10 +201,14 @@ class CreateCameras(QWidget):
             os.makedirs(pathData, exist_ok=True)
 
         cameras_txt_filepath = os.path.join(pathData, "cameras.txt")
-        imgSize = int(self.imageSize.text())
+        imgWidth = int(self.imageWidth.text())
+        imgHeight = int(self.imageHeight.text())
+        imgSize = imgWidth*imgHeight
         focalLength = imgSize/2
-        camera_line_template = "{id} PINHOLE {imgSize} {imgSize} {focalLength} {focalLength} {focalLength} {focalLength}"
-        camera_lines = "\n".join(camera_line_template.format(id=i + 1, imgSize=imgSize, focalLength=focalLength) for i in range(num_cameras))
+        ppX = 0 # Principal Point
+        ppY = 0
+        camera_line_template = "{id} SIMPLE_PINHOLE {imgWidth} {imgHeight} {focalLength} {ppX} {ppY}"
+        camera_lines = "\n".join(camera_line_template.format(id=i + 1, imgWidth=imgWidth, imgHeight=imgHeight, focalLength=focalLength, ppX=ppX, ppY=ppY) for i in range(num_cameras))
 
         cameras_content = f"""
 # Camera list with one line of data per camera:
@@ -241,8 +251,9 @@ class CreateCameras(QWidget):
         if not os.path.isdir(pathImage):
             os.makedirs(pathImage, exist_ok=True)
 
-        imgSize = int(self.imageSize.text())
-        image = Image.new("RGB", (imgSize, imgSize), (255,0,0))
+        imgWidth = int(self.imageWidth.text())
+        imgHeight = int(self.imageHeight.text())
+        image = Image.new("RGB", (imgWidth, imgHeight), (255,0,0))
 
         # Save the image
         image.save(pathImage+"test.jpg")
