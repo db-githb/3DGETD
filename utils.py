@@ -39,14 +39,14 @@ def userInputLayout(parent, inPath):
         missing_str = ", ".join(missing_dirs.keys())
         missing_list = ''.join(f'<li>{item}</li>' for item in missing_str.split(','))
         reply = QMessageBox.question(parent,
-                                    'Create Subdirectory',
-                                    f'The directory:<br>'
+                                    'Create New Project',
+                                    f'Create new project in:<br>'
                                     f'<br>{parent.pathRoot}<br><br>'
-                                    f'does not have the following subdirectories:'
+                                    f'The following subdirectories will be created:'
                                     f'<div style="text-align: center;"><ul style="text-align: left;">{missing_list}</ul></div>'
-                                    f'Do you want to create them?</div>',
+                                    f'Do you want to continue?</div>',
                                     QMessageBox.Yes | QMessageBox.No,
-                                    QMessageBox.No
+                                    QMessageBox.Yes
                                 )
 
         # Create Directories
@@ -174,7 +174,7 @@ def checkDirectoryValidity(parent):
     # Check if the directory exists and ask the user if they want to create it if it doesn't
     dir_path = completePath(parent)
     if not dir_path or not os.path.isdir(dir_path):
-        reply = QMessageBox.question(parent, 'Create Directory', f'The directory "{dir_path}" does not exist. Do you want to create it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        reply = QMessageBox.question(parent, 'Create Directory', f'The directory "{dir_path}" does not exist. Do you want to create it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
         if reply == QMessageBox.Yes:
             try:
                 os.makedirs(dir_path, exist_ok=True)
