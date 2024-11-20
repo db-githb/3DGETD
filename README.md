@@ -1,4 +1,7 @@
-# 3D Gaussian Generator
+<p align="center">
+
+  <h1 align="center"> 3D Gaussian Generator</h1>
+</p>
 
 **3D Gaussian Generator** is a tool designed to create cameras and 3D gaussians for testing the forward/rendering pass of 3D Gaussian Splatting applications in Nerfstudio.
 
