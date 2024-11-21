@@ -40,9 +40,11 @@ For users who want a quick way to generate synthetic data without setting up the
 
 ## 📖 Usage
 
+The project requires a specific directory structure with data and models subdirectories to organize 3D Gaussians, camera data, and Nerfstudio-compatible files. These directories, along with necessary files, are automatically created by the tool if they do not already exist.
+
 ### 📂 Directory Structure
 
-The generation of 3D Gaussians and the scene's respective cameras requires a data and models subdirectory underneath your project directory:
+The generation of 3D Gaussians and the scene's respective cameras requires a ```data``` and ```models``` subdirectory under your project directory:
 
 ```
 <your-project-name>/
