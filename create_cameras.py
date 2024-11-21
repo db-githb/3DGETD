@@ -205,7 +205,7 @@ class CreateCameras(QWidget):
         imgHeight = int(self.imageHeight.text())
         focalLength = 1
         camera_line_template = "{id} SIMPLE_PINHOLE {imgWidth} {imgHeight} {fl} {imgWidth} {imgHeight}"
-        camera_lines = "\n".join(camera_line_template.format(id=i + 1, imgWidth=imgWidth, imgHeight=imgHeight, flX=focalLength) for i in range(num_cameras))
+        camera_lines = "\n".join(camera_line_template.format(id=i + 1, imgWidth=imgWidth, imgHeight=imgHeight, fl=focalLength) for i in range(num_cameras))
 
         cameras_content = f"""
 # Camera list with one line of data per camera:
