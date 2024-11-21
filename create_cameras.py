@@ -56,7 +56,7 @@ class CreateCameras(QWidget):
 
         self.imageSizeLayout = QHBoxLayout()
         labelImageSize = QLabel("Image Size:")
-        labelImageSize.setToolTip("Simple Pinhole camera:\nPrincipal Points = (0,0),\nFocal Length=(Width x Height)/2.")
+        labelImageSize.setToolTip("Pinhole camera:\nPrincipal Point = (0,0),\nFocal Length= Width/2 , Height/2.")
         labelImageWidth = QLabel("Width =")
         self.imageWidth = QLineEdit("100")
         labelImageHeight = QLabel("Height =")
@@ -203,12 +203,12 @@ class CreateCameras(QWidget):
         cameras_txt_filepath = os.path.join(pathData, "cameras.txt")
         imgWidth = int(self.imageWidth.text())
         imgHeight = int(self.imageHeight.text())
-        imgSize = imgWidth*imgHeight
-        focalLength = imgSize/2
+        flX = imgWidth/2
+        flY = imgHeight/2
         ppX = 0 # Principal Point
         ppY = 0
-        camera_line_template = "{id} SIMPLE_PINHOLE {imgWidth} {imgHeight} {focalLength} {ppX} {ppY}"
-        camera_lines = "\n".join(camera_line_template.format(id=i + 1, imgWidth=imgWidth, imgHeight=imgHeight, focalLength=focalLength, ppX=ppX, ppY=ppY) for i in range(num_cameras))
+        camera_line_template = "{id} SIMPLE_PINHOLE {imgWidth} {imgHeight} {flX} {flY} {ppX} {ppY}"
+        camera_lines = "\n".join(camera_line_template.format(id=i + 1, imgWidth=imgWidth, imgHeight=imgHeight, flX=flX, flY=flY, ppX=ppX, ppY=ppY) for i in range(num_cameras))
 
         cameras_content = f"""
 # Camera list with one line of data per camera:
