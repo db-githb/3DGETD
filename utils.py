@@ -1,6 +1,5 @@
 import os
 import datetime as dt
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QMessageBox, QLineEdit
 
 subDirLst = ["models", "data"]

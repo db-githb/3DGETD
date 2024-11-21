@@ -1,6 +1,5 @@
 import sys
-import os
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog, QLabel, QLineEdit, QHBoxLayout, QMessageBox
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QLineEdit, QHBoxLayout
 
 from utils import openDirectoryDialog, toggleButtons, checkDirectoryValidity
 from generate_gaussians import GaussianGenerator

@@ -3,7 +3,6 @@ from random import randint
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QScrollArea, QGridLayout, QMessageBox
 )
-import numpy as np
 from PIL import Image
 from utils import userInputLayout, toggleButtons, connectLineEdits, savedTimeStamp
 # Default custom path

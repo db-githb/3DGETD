@@ -56,7 +56,7 @@ The tool has been tested with Python 3.12 and CUDA 12.1. If you're using differe
    - **Using** `pip`
         ```
         cd 3DGETD
-        pip install pip_requirements.txt
+        pip install requirements.txt
         ```
 
 3. **Run the tool**:
