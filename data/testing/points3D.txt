@@ -1,9 +1,0 @@
-
-# 3D point list with one line of data per point:
-# POINT3D_ID, X, Y, Z, R, G, B, ERROR, TRACK[] as (IMAGE_ID, POINT2D_IDX)
-# Number of points: 2, mean track length: 3.3334
-0 0.0 0.0 0.0 1 0 0 0 0 0 0 0 0 0 0 0
-1 2.0 0.0 0.0 0 1 0 0 0 0 0 0 0 0 0 0
-2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0
-3 3 3 3 3 3 3 0 0 0 0 0 0 0 0 0
-        
