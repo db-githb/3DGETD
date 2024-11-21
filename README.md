@@ -1,7 +1,5 @@
-<div style="text-align: center;">
-  <h1 style="margin: 0; font-size: 24px;">3D GET-D</h1>
-  <h2 style="font-size: 24px; margin-top: 8px;">3D Gaussian Editor for Test Data</h2>
-</div>
+<p align="center" style="margin: 0; font-size: 24px; font-weight: bold;">3D GET-D</p>
+<p align="center" style="font-size: 24px; margin-top: 8px; font-weight: bold;">3D Gaussian Editor for Test Data</p>
 
 
 **3D GET-D** is a tool designed to create cameras and 3D gaussians for testing the forward/rendering pass of 3D Gaussian Splatting applications in Nerfstudio.
