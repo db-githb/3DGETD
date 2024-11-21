@@ -96,14 +96,9 @@ In addition, Nerfstudio requires the following directory structure and names:
 │  │  ├─ dataparsers_transform.json
 ```
 
-These required subdirectories and files are created by the tool. 
+These required subdirectories and files are created by the tool.
 
 ---
-## 📜 **License**
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
-
----
-
 ## 🎯 **Future Plans**
 - Extend this project to support the 3D Gaussian Splatting framework from Inria.
 
@@ -124,3 +119,7 @@ If you found this tool useful in your research, please cite it!
   publisher = {GitHub},
   url = {https://github.com/db-githb/3D_GET-D},
 }
+```
+---
+## 📜 **License**
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
