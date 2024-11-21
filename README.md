@@ -1,25 +1,7 @@
-<p align="center">
-  <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin: 0;">
-    <svg width="20" height="20" viewBox="0 10 100 100" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <filter id="fuzzy-left">
-          <feGaussianBlur stdDeviation="12" />
-        </filter>
-      </defs>
-      <circle cx="50" cy="50" r="30" fill="#4CAF50" filter="url(#fuzzy-left)" />
-    </svg>
-    <h1 style="margin: 0; font-size: 24px;">3D GET-D</h1>
-    <svg width="20" height="20" viewBox="0 10 100 100" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <filter id="fuzzy-right">
-          <feGaussianBlur stdDeviation="12" />
-        </filter>
-      </defs>
-      <circle cx="50" cy="50" r="30" fill="#4CAF50" filter="url(#fuzzy-right)" />
-    </svg>
-  </div>
-  <h2 align="center" style="font-size: 24px; margin-top: 8px;">3D Gaussian Editor for Test Data</h2>
-</p>
+<div style="text-align: center;">
+  <h1 style="margin: 0; font-size: 24px;">3D GET-D</h1>
+  <h2 style="font-size: 24px; margin-top: 8px;">3D Gaussian Editor for Test Data</h2>
+</div>
 
 
 **3D GET-D** is a tool designed to create cameras and 3D gaussians for testing the forward/rendering pass of 3D Gaussian Splatting applications in Nerfstudio.
