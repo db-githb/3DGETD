@@ -50,7 +50,7 @@ The tool has been tested with Python 3.12 and CUDA 12.1. If you're using differe
 
    - **Using** `conda`:
         ```
-        cd 3DGET
+        cd 3DGETD
         conda env create -f environment.yml
         ```
    - **Using** `pip`
