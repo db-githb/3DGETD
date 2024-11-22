@@ -1,6 +1,6 @@
 import os
 from random import randint
-from PyQt5.QtWidgets import (
+from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QScrollArea, QGridLayout, QMessageBox
 )
 from PIL import Image

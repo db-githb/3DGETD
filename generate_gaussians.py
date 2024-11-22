@@ -1,7 +1,7 @@
 import os
 import torch
 import json
-from PyQt5.QtWidgets import (
+from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QGridLayout, QMessageBox
 )
 from utils import userInputLayout, toggleButtons, connectLineEdits, savedTimeStamp
