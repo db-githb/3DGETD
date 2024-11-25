@@ -137,6 +137,7 @@ class GaussianGenerator(QWidget):
         if os.path.exists(checkpoint_file):
             checkpoint = torch.load(checkpoint_file)
             numExistingGauss = checkpoint["pipeline"]["_model.gauss_params.means"].shape[0]
+            self.num_gaussians_entry.setText(str(numExistingGauss))
         else:
             checkpoint = None
 
@@ -150,7 +151,12 @@ class GaussianGenerator(QWidget):
             labelFe.setToolTip("Diffuse (base) color: R G B, range=(0,255)")
             self.gaussian_layout.addWidget(labelFe, row_offset + 1, 0)
 
-            if i % 3 == 0:
+            if checkpoint is not None and i < numExistingGauss:
+                fe = checkpoint["pipeline"]["_model.gauss_params.features_dc"][i]
+                fe1 = QLineEdit(str(fe[0].item()))
+                fe2 = QLineEdit(str(fe[1].item()))
+                fe3 = QLineEdit(str(fe[2].item()))
+            elif i % 3 == 0:
                 fe1 = QLineEdit("1")
                 fe2 = QLineEdit("0")
                 fe3 = QLineEdit("0")
@@ -162,11 +168,6 @@ class GaussianGenerator(QWidget):
                 fe1 = QLineEdit("0")
                 fe2 = QLineEdit("0")
                 fe3 = QLineEdit("1")
-            elif checkpoint is not None and i < numExistingGauss:
-                fe = checkpoint["pipeline"]["_model.gauss_params.features_dc"][i]
-                fe1 = QLineEdit(str(fe[0].item()))
-                fe2 = QLineEdit(str(fe[1].item()))
-                fe3 = QLineEdit(str(fe[2].item()))
 
             self.gaussian_layout.addWidget(fe1, row_offset + 1, 1)
             self.gaussian_layout.addWidget(fe2, row_offset + 1, 2)
@@ -340,7 +341,7 @@ class GaussianGenerator(QWidget):
         checkpoint["pipeline"]["_model.gauss_params.quats"] = torch.tensor(quats, device="cuda")
         checkpoint["pipeline"]["_model.gauss_params.scales"] = torch.tensor(scales, device="cuda")
 
-        # points3D isn't actually used for rendering by NS BUT minimum 4 points are needed when loading the model of k-nearest neighbours
+        # points3D isn't actually used for rendering by NerfStudio BUT minimum 4 points are needed when loading the model of k-nearest neighbours
         points3D_txt_filepath = os.path.join(self.pathData, "points3D.txt")
 
         point_line_template = "{id} {x} {y} {z} {r} {g} {b} 0 0 0 0 0 0 0 0 0"

@@ -127,7 +127,7 @@ def setImgSize(parent):
                     elems = line.split()
                     parent.imageWidth.setText(str(elems[2:3][0]))
                     parent.imageHeight.setText(str(elems[3:4][0]))
-                    break # all images should be the same size so only need the one value
+                    break # all images should be the same size so only need the the width and height once
 
 def openDirectoryDialog(parent):
     # Open the QFileDialog to select a directory
