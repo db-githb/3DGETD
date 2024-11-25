@@ -92,4 +92,4 @@ if __name__ == '__main__':
     window = MainWindow()
     window.setMinimumSize(500, 100)
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
