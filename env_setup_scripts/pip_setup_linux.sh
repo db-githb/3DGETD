@@ -30,7 +30,7 @@ if ! command_exists conda; then
 fi
 
 # Create the Conda environment
-echo "Creating Conda environment '3DGETD' with Python 3.12, numpy, pillow, and PySide6..."
+echo "Creating Conda environment '3DGETD' with Python 3.12, numpy, pillow, PySide6, and torch (cuda enabled)..."
 python3 -m venv 3DGETD
 source 3DGETD/bin/activate
 pip install PySide6==6.8.0.2

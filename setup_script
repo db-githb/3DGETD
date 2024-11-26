@@ -15,17 +15,8 @@ fi
 while true; do
 	read -p "Choose package manager (pip or conda): " pm
 	if [[ "$pm" == "pip" || "$choice" == "conda" ]]; then
-		pm=${pm}
 		break
 	else
 		echo "Invalid input. Try again."
     	fi
-
-
-
-
-
-
-
-
-	
+    	
