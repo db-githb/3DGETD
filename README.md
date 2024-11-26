@@ -17,51 +17,41 @@
 
 ## 🔧  **Installation Overview**
 
-This tool provides precompiled executables for quick and easy use on major platforms, as well as the option to clone and install the repository locally for customization or development. Detailed instructions for both approaches are provided below.
-
-### ⚙️  **Quick Start with Executables**
-
-For users who want a quick way to generate synthetic data without setting up the full environment, precompiled executables are provided for Linux and Windows:
-
-- **Linux** 
-- **Windows**
-
-### 🛠️ **Cloning and Installing Repository**
-
+This project includes shell scripts to automate the creation and setup of the required virtual environment using Conda. These scripts ensure compatibility with the installed CUDA version and use Python 3.12 as the base interpreter.
 #### 📋 **Prerequisites**
-This tool requires **Python** and the following packages:
+Before cloning and installing the repository, please ensure the following are installed and available in your system's `PATH`:
+- **Conda**: For environment creation and package management.
+- **CUDA Toolkit**: Required for installing compatible `pytorch-cuda`.
 
-- **NumPy**
-- **Pillow**
-- **PyQt**
-- **PyTorch** (CUDA enabled)
-
-The tool has been tested with Python 3.12 and CUDA 12.1. If you're using different versions of Python or CUDA, please ensure that all required packages are compatible with your environment.
-
-#### 📝 **Steps to Set Up**
+The tool has been tested with Python 3.12, 3.10 and CUDA 12.1, 11.8. If you're using different versions of Python or CUDA, please ensure that all required packages are compatible with your environment.
 
 1. **Clone the repository**:
- 
-        git clone https://github.com/db-githb/3DGETD.git
+    ```git
+    git clone https://github.com/db-githb/3DGETD.git
+    ```
+2. **Navigate to `setup_scripts`**
+    ```bash
+    cd setup_scripts
+    ```
+3. **Make the script executable**:
+    ```bash
+    chmod +x conda_setup_linux.sh
+    ```
+4. **Run the script**
 
-2. **Create environment and install dependencies**:
-
-   Choose one of the following methods, depending on your preference for `conda` or `pip`:
-
-   - **Using** `conda`:
+    - Conda+Linux
+        ```bash
+        ./conda_setup_linux.sh
         ```
-        cd 3DGETD
-        conda env create -f environment.yml
+    - Pip+Linux
+        ```bash
+        ./conda_setup_linux.sh
         ```
-   - **Using** `pip`
-        ```
-        cd 3DGETD
-        pip install requirements.txt
-        ```
-
-3. **Run the tool**:
-
-        python 3dgetd.py
+5. **Run the tool**:
+    ```
+    python 3dgetd.py
+    ````
+---
 
 ## 📖 **Usage**
 
