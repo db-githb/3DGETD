@@ -29,6 +29,9 @@ while true; do
     fi
 done
 
+# Store package manager selection in log file for executable script
+pm > log.txt
+
 # Construct the script name
 script_name="./env_setup_scripts/${pm}_setup_${OS}.sh"
 
@@ -41,6 +44,9 @@ else
     echo "Error: Script '$script_name' not found."
     exit 1
 fi
+
+# Ensure run scripts is executable
+chmod +x run_3dgetd.sh 
 
 
 

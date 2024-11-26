@@ -25,34 +25,31 @@ Before cloning and installing the repository, please ensure the following are in
 
 The tool has been tested with Python 3.12, 3.10 and CUDA 12.1, 11.8. If you're using different versions of Python or CUDA, please ensure that all required packages are compatible with your environment.
 
+**Windows Users**: All the steps in the following guide must be run inside a `bash` shell (e.g. Git Bash, WSL, or another Bash environment)
+
+**Linux Users**: You can run the commands directly in your terminal
+
+#### 📝 **Steps to Set Up Environment**
+
 1. **Clone the repository**:
     ```git
     git clone https://github.com/db-githb/3DGETD.git
     ```
-2. **Navigate to `setup_scripts`**
+2. **Make setup_script.sh executable**:
     ```bash
-    cd setup_scripts
+    chmod +x setup_script.sh
     ```
-3. **Make the script executable**:
+3. **Run `setup_script.sh`**
     ```bash
-    chmod +x conda_setup_linux.sh
+    ./setup_script.sh
     ```
-4. **Run the script**
+    The script will prompt you to choose your package manager, `pip` or `conda`.
+#### ▶️ **Run the tool**:
 
-    - Conda+Linux
-        ```bash
-        ./conda_setup_linux.sh
-        ```
-    - Pip+Linux
-        ```bash
-        ./conda_setup_linux.sh
-        ```
-5. **Run the tool**:
-    ```
-    python 3dgetd.py
-    ````
+Once the environment is set up, run the tool using the following command:
+
+    ./run_3dgetd.sh
 ---
-
 ## 📖 **Usage**
 
 The project requires a specific directory structure with data and models subdirectories to organize 3D Gaussians, camera data, and Nerfstudio-compatible files. These directories, along with necessary files, are automatically created by the tool if they do not already exist.
