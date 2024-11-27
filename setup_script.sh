@@ -94,7 +94,7 @@ elif [[ "$package_manager" == "pip" ]]; then
 	pip install numpy pillow torch --index-url https://download.pytorch.org/whl/cu"$CUDA_VERSION"
 
 	if [ $? -ne 0 ]; then
-	    echo "Failed to create Conda environment or install packages."
+	    echo "Failed to create environment or install packages."
 	    exit 1
 	fi
 
