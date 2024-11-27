@@ -45,14 +45,19 @@ fi
 # Run the Python script in the background
 python 3dgetd.py & pid=$! # Process Id of the previous running command
 
-spin='-\|/'
+spin=('[    ]' '[=   ]' '[==  ]' '[=== ]' '[ ===]' '[  ==]' '[   =]')
 
 i=0
-while kill -0 $pid 2>/dev/null
-do
-  i=$(( (i+1) %4 ))
-  printf "\rRunning 3DGETD %c" "${spin:$i:1}"
-  sleep .1
+while kill -0 $pid 2>/dev/null; do
+  # Use the current frame from the spinner array
+  echo -ne "\rRunning 3DGETD ${spin[i]}"
+  
+  # Increment and reset the spinner index
+  i=$(( (i + 1) % ${#spin[@]} ))
+  
+  # Add a delay
+  sleep 0.2
 done
+
 echo
 echo "Goodbye!"
