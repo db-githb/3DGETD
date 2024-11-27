@@ -17,12 +17,14 @@ else
 	exit 1
 fi
 
+echo "operating_system="$OS > log.txt
+
 # Get user input for package manager
 while true; do
-	read -p "Choose package manager (pip or conda): " pm
-	if [[ "$pm" == "pip" || "$pm" == "conda" ]]; then
-		pm=${pm}
-		echo $pm
+	read -p "Choose package manager (pip or conda): " package_manager
+	if [[ "$package_manager" == "pip" || "$package_manager" == "conda" ]]; then
+		package_manager=${package_manager}
+		echo $package_manager
 		break
 	else
 		echo "Invalid input. Try again."
@@ -30,10 +32,10 @@ while true; do
 done
 
 # Store package manager selection in log file for executable script
-pm > log.txt
+"package_manager="$package_manager > log.txt
 
 # Construct the script name
-script_name="./env_setup_scripts/${pm}_setup_${OS}.sh"
+script_name="./env_setup_scripts/${package_manager}_setup_${OS}.sh"
 
 # Check if the script exists
 if [[ -f "$script_name" ]]; then

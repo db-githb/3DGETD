@@ -60,7 +60,7 @@ class MainWindow(QWidget):
 
         # Set the layout and window title
         self.setLayout(self.layout)
-        self.setWindowTitle("3D Gaussian Generator")
+        self.setWindowTitle("3DGETD")
 
     def dispWindow(self):
         # Dictionary mapping button text to window creation functions
