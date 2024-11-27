@@ -37,7 +37,7 @@ while true; do
 done
 
 # Store package manager selection in log file for executable script
-echo "package_manager=$package_manager" > log.txt
+echo "package_manager=$package_manager" >> log.txt
 
 # Construct the script name
 script_name="./env_setup_scripts/${package_manager}_setup_${OS}.sh"

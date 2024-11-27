@@ -25,15 +25,15 @@ else
 fi
 
 echo -n "Activating virtual environment..."
-if [[ $package_manager=="conda" ]]; then
+if [[ $package_manager == "conda" ]]; then
     conda activate 3DGETD
     echo " ✔"
 
-elif [[ $package_manager=="pip" && $OS=="Linux" ]]; then
+elif [[ $package_manager == "pip" && $OS == "Linux" ]]; then
     source 3DGETD/bin/activate
     echo " ✔"
 
-elif [[ $package_manager=="pip" && $OS=="Window" ]]; then
+elif [[ $package_manager == "pip" && $OS == "Window" ]]; then
     3DGETD\Scripts\activate
     echo " ✔"
 
@@ -61,10 +61,10 @@ done
 echo
 # Deactivate virtual environment
 echo -n "Deactivating virtual environment..."
-if [[ $package_manager=="conda" ]]; then
+if [[ $package_manager == "conda" ]]; then
     conda deactivate
     echo " ✔"
-elif [[ $package_manager=="pip" ]]; then
+elif [[ $package_manager == "pip" ]]; then
     deactivate
     echo " ✔"
 else
