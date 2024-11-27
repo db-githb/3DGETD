@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Function to check if a command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
 OS=$(uname)
 
 # Detect OS
@@ -24,15 +29,15 @@ while true; do
 	read -p "Choose package manager (pip or conda): " package_manager
 	if [[ "$package_manager" == "pip" || "$package_manager" == "conda" ]]; then
 		package_manager=${package_manager}
-		echo $package_manager
+		echo "Selected package manager: $package_manager"
 		break
 	else
-		echo "Invalid input. Try again."
+		echo "Invalid input. Try again. (Note: Ensure all lowercase.)"
     fi
 done
 
 # Store package manager selection in log file for executable script
-"package_manager="$package_manager > log.txt
+echo "package_manager=$package_manager" > log.txt
 
 # Construct the script name
 script_name="./env_setup_scripts/${package_manager}_setup_${OS}.sh"

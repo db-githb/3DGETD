@@ -27,15 +27,15 @@ fi
 echo -n "Activating virtual environment..."
 if [[ $package_manager=="conda" ]]; then
     conda activate 3DGETD
-    echo -e "\rActivating virtual environment... ✔"
+    echo " ✔"
 
 elif [[ $package_manager=="pip" && $OS=="Linux" ]]; then
     source 3DGETD/bin/activate
-    echo -e "\rActivating virtual environment... ✔"
+    echo " ✔"
 
 elif [[ $package_manager=="pip" && $OS=="Window" ]]; then
     3DGETD\Scripts\activate
-    echo -e "\rActivating virtual environment... ✔"
+    echo " ✔"
 
 else
     echo "Failed to activate environment."
@@ -58,6 +58,18 @@ while kill -0 $pid 2>/dev/null; do
   # Add a delay
   sleep 0.2
 done
-
 echo
+# Deactivate virtual environment
+echo -n "Deactivating virtual environment..."
+if [[ $package_manager=="conda" ]]; then
+    conda deactivate
+    echo " ✔"
+elif [[ $package_manager=="pip" ]]; then
+    deactivate
+    echo " ✔"
+else
+    echo "Failed to deactivate virtual environment"
+    echo -e "\rDeactivating virtual environment... ✘"
+fi
+
 echo "Goodbye!"
