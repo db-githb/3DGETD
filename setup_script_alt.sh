@@ -5,7 +5,6 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-# Function return false if arg1 >= arg2, true if arg1 < arg2
 compare_versions() {
     if [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]; then
         return 0  # v1 >= v2
@@ -34,14 +33,12 @@ if [[ "$OS" == "Linux" ]]; then
     echo "Linux system detected."
 elif [[ "$OS" == "Darwin" ]]; then
     echo "MacOS system detected. This tool is unavailable for MacOS. Please use Linux or Windows."
-	sleep 5s
 	exit 1
 elif [[ "$OS" == "CYGWIN"* || "$OS" == "MINGW"* ]]; then
 	OS="windows"
     echo "Windows system detected."
 else
     echo "Unknown operating system: $OS.  Please use Linux or Windows."
-	sleep 5s
 	exit 1
 fi
 
@@ -53,26 +50,6 @@ echo "package_manager=$package_manager" >> log.txt
 # Construct the script name
 script_name="./env_setup_scripts/${package_manager}_setup_${OS}.sh"
 
-# Retrieve Python version
-PYTHON_VERSION=$(python3 --version 2>&1 | grep -oP '\d+\.\d+\.\d+')
-echo "Python version detected: $PYTHON_VERSION"
-if ! compare_versions "$PYTHON_VERSION" "3.8"; then
-    echo "Detected Python < 3.8.  Using Python 3.12."
-	while true; do
-		read -p "Would you like to continue? y/n: " opt
-		if [[ "$opt" == "y" ]]; then
-			PYTHON_VERSION=3.12
-			break
-		elif [[ "$opt" == "n" ]]; then
-			echo "Exiting setup."
-			sleep 1s
-			exit 1
-		else
-			echo "Invalid input. Try again. (Note: Ensure all lowercase.)"
-    	fi
-	done
-fi
-
 # Check if nvcc is installed
 if ! command_exists nvcc; then
     echo "CUDA is not installed or nvcc is not found in PATH."
@@ -83,45 +60,59 @@ fi
 CUDA_VERSION=$(nvcc --version | grep -oP "release \K[0-9]+\.[0-9]+")
 if [ -z "$CUDA_VERSION" ]; then
     echo "Unable to detect CUDA version."
-	sleep 5s
     exit 1
 fi
 echo "CUDA version detected: $CUDA_VERSION"
-nvdiasmi=nvidia-smi | grep -oP "CUDA Version: \K[0-9.]+"
 
-if compare_versions "$CUDA_VERSION" "12.4"; then
-    CUDA_VERSION=12.1
-elif ! compare_versions "$CUDA_VERSION" "11.8" && \
-	 ! compare_version "$nvdiasmi" "12.4" ; then
-	if  
-    echo "Detected CUDA < 11.8 but GPU drivers support pytorch-cuda 12.1."
-	while true; do
-		read -p "Would you like to continue? y/n: " opt
-		if [[ "$opt" == "y" ]]; then
-			CUDA_VERSION=12.1
-			break
-		elif [[ "$opt" == "n" ]]; then
-			echo "Exiting setup."
-			sleep 1s
-			exit 1
-		else
-			echo "Invalid input. Try again. (Note: Ensure all lowercase.)"
-    	fi
-	done
-fi
+# Adjust CUDA version format for PyTorch compatibility
+CUDA_VERSION=${CUDA_VERSION}
+
+# Retrieve Python version
+PYTHON_VERSION=$(python3 --version 2>&1 | grep -oP '\d+\.\d+\.\d+')
+echo "Python version detected: $PYTHON_VERSION"
+
+TORCH_VERSION=2.5
 
 # Ensure compatible Torch and CUDA versions
-TORCH_VERSION=2.5
+
+# torch >=3.9 AND CUDA >= 11.8 AND !(CUDA >=12.4)
+if compare_versions "$PYTHON_VERSION" "3.9" && \
+   compare_versions "$CUDA_VERSION" "11.8" && \
+   ! compare_versions "$CUDA_VERSION" "12.4"; then
+    TORCH_VERSION=2.5
+	echo "Using pytorch: 2.5"
+elif compare_versions "$PYTHON_VERSION" "3.8" && \
+     compare_versions "$CUDA_VERSION" "11.8" && \
+     ! compare_versions "$CUDA_VERSION" "12.1"; then
+    TORCH_VERSION=2.4
+	echo "Using pytorch: 2.4"
+elif compare_versions "$PYTHON_VERSION" "3.8" && \
+	 ! compare_versions "$PYTHON_VERSION" "3.11" && \
+     compare_versions "$CUDA_VERSION" "11.7"; then
+    TORCH_VERSION=2.4
+	echo "Using pytorch: 2.5"
+elif ! compare_versions "$PYTHON_VERSION" "3.8"; then
+    echo "Python $PYTHON_VERSION incompatible; must be >= 3.8"
+	sleep 2s
+    exit 1
+elif ! compare_versions "$CUDA_VERSION" "11.8"; then
+    echo "CUDA $CUDA_VERSION incompatible; must be >= 11.7"
+	sleep 2s
+    exit 1
+else
+    echo "Configuration not supported."
+	sleep 5s
+    exit 1
+fi
 
 echo "Using Torch version: $TORCH_VERSION"
 
 if [[ "$package_manager" == "conda" ]]; then
 	# Check if conda is installed
-	if command -v conda &> /dev/null; then
-    	eval "$(conda shell.bash hook)"
-	else
-	    echo "Conda is not installed or not in your PATH."
-	    return 1
+	if ! command_exists conda; then
+	    echo "Conda is not installed or not found in PATH."
+		sleep 5s
+	    exit 1
 	fi
 
 	# Create the Conda environment

@@ -1,15 +1,5 @@
 #!/bin/bash
 
-# >>> Conda Initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-if command -v conda &> /dev/null; then
-    eval "$(conda shell.bash hook)"
-else
-    echo "Conda is not installed or not in your PATH."
-    return 1
-fi
-# <<< Conda Initialize <<<
-
 # Define the log file
 log_file="log.txt"
 
@@ -26,6 +16,17 @@ fi
 
 echo -n "Activating virtual environment..."
 if [[ $package_manager == "conda" ]]; then
+
+    # >>> Conda Initialize >>>
+    # !! Contents within this block are managed by 'conda init' !!
+    if command -v conda &> /dev/null; then
+        eval "$(conda shell.bash hook)"
+    else
+        echo "Conda is not installed or not in your PATH."
+        return 1
+    fi
+    # <<< Conda Initialize <<<
+    
     conda activate 3DGETD
     echo " ✔"
 
