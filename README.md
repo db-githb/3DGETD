@@ -87,6 +87,7 @@ These required subdirectories and files are created by the tool.
 
 ---
 ## 🎯 **Future Plans**
+- Create executables
 - Extend this project to support the 3D Gaussian Splatting framework from Inria.
 
 ---

@@ -5,24 +5,13 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-OS=$(uname)
-
-# Detect OS
-if [[ "$OS" == "Linux" ]]; then
-	OS="linux"
-    echo "Linux system detected."
-elif [[ "$OS" == "Darwin" ]]; then
-    echo "MacOS system detected. This tool is unavailable for MacOS. Please use Linux or Windows."
-	exit 1
-elif [[ "$OS" == "CYGWIN"* || "$OS" == "MINGW"* ]]; then
-	OS="windows"
-    echo "Windows system detected."
-else
-    echo "Unknown operating system: $OS.  Please use Linux or Windows."
-	exit 1
-fi
-
-echo "operating_system="$OS > log.txt
+compare_versions() {
+    if [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]; then
+        return 0  # v1 >= v2
+    else
+        return 1  # v1 < v2
+    fi
+}
 
 # Get user input for package manager
 while true; do
@@ -36,11 +25,52 @@ while true; do
     fi
 done
 
+OS=$(uname)
+
+# Detect OS
+if [[ "$OS" == "Linux" ]]; then
+	OS="linux"
+    echo "Linux system detected."
+elif [[ "$OS" == "Darwin" ]]; then
+    echo "MacOS system detected. This tool is unavailable for MacOS. Please use Linux or Windows."
+	sleep 5s
+	exit 1
+elif [[ "$OS" == "CYGWIN"* || "$OS" == "MINGW"* ]]; then
+	OS="windows"
+    echo "Windows system detected."
+else
+    echo "Unknown operating system: $OS.  Please use Linux or Windows."
+	sleep 5s
+	exit 1
+fi
+
+echo "operating_system="$OS > log.txt
+
 # Store package manager selection in log file for executable script
 echo "package_manager=$package_manager" >> log.txt
 
 # Construct the script name
 script_name="./env_setup_scripts/${package_manager}_setup_${OS}.sh"
+
+# Retrieve Python version
+PYTHON_VERSION=$(python3 --version 2>&1 | grep -oP '\d+\.\d+\.\d+')
+echo "Python version detected: $PYTHON_VERSION"
+if ! compare_versions "$PYTHON_VERSION" "3.8"; then
+    echo "Detected Python < 3.8.  Using Python 3.12."
+	while true; do
+		read -p "Would you like to continue? y/n: " opt
+		if [[ "$opt" == "y" ]]; then
+			PYTHON_VERSION=3.12
+			break
+		elif [[ "$opt" == "n" ]]; then
+			echo "Exiting setup."
+			sleep 1s
+			exit 1
+		else
+			echo "Invalid input. Try again. (Note: Ensure all lowercase.)"
+    	fi
+	done
+fi
 
 # Check if nvcc is installed
 if ! command_exists nvcc; then
@@ -49,27 +79,57 @@ if ! command_exists nvcc; then
 fi
 
 # Get the CUDA version
-echo "Checking CUDA version..."
 CUDA_VERSION=$(nvcc --version | grep -oP "release \K[0-9]+\.[0-9]+")
 if [ -z "$CUDA_VERSION" ]; then
     echo "Unable to detect CUDA version."
+	sleep 5s
     exit 1
 fi
 echo "CUDA version detected: $CUDA_VERSION"
 
+if ! compare_versions "$CUDA_VERSION" "11.8"; then
+    echo "Detected CUDA < 11.8.  Using pytorch-cuda 12.1."
+	while true; do
+		read -p "Would you like to continue? y/n: " opt
+		if [[ "$opt" == "y" ]]; then
+			CUDA_VERSION=12.2
+			break
+		elif [[ "$opt" == "n" ]]; then
+			echo "Exiting setup."
+			sleep 1s
+			exit 1
+		else
+			echo "Invalid input. Try again. (Note: Ensure all lowercase.)"
+    	fi
+	done
+
 # Adjust CUDA version format for PyTorch compatibility
 CUDA_VERSION=${CUDA_VERSION}
+
+# Ensure compatible Torch and CUDA versions
+TORCH_VERSION=2.5
+#if compare_versions "$PYTHON_VERSION" "3.9" && \
+#   compare_versions "$CUDA_VERSION" "11.8" && \
+#   ! compare_versions "$CUDA_VERSION" "12.4"; then
+#    TORCH_VERSION=2.5.1
+if compare_versions "$PYTHON_VERSION" "3.8" && \
+     compare_versions "$CUDA_VERSION" "11.8" && \
+     ! compare_versions "$CUDA_VERSION" "12.1"; then
+    TORCH_VERSION=2.4
+
+echo "Using Torch version: $TORCH_VERSION"
 
 if [[ "$package_manager" == "conda" ]]; then
 	# Check if conda is installed
 	if ! command_exists conda; then
 	    echo "Conda is not installed or not found in PATH."
+		sleep 5s
 	    exit 1
 	fi
 
 	# Create the Conda environment
-	echo "Creating Conda environment '3DGETD' with Python 3.12, numpy, pillow, and PySide6..."
-	conda create -n 3DGETD python=3.12 numpy pillow conda-forge::pyside6 pytorch pytorch-cuda="$CUDA_VERSION" -c pytorch -c nvidia -y
+	echo "Creating Conda environment '3DGETD' with Python $PYTHON_VERSION, numpy, pillow, PySide6, pytorch=$TORCH_VERSION, pytorch-cuda=$CUDA_VERSION"
+	conda create -n 3DGETD python="$PYTHON_VERSION" numpy pillow conda-forge::pyside6 pytorch="$TORCH_VERSION" pytorch-cuda="$CUDA_VERSION" -c pytorch -c nvidia -y
 	if [ $? -ne 0 ]; then
 	    echo "Failed to create Conda environment or install packages."
 	    exit 1
@@ -87,7 +147,7 @@ elif [[ "$package_manager" == "pip" ]]; then
 
 	# Create the Pip environment
 	CUDA_VERSION=${CUDA_VERSION//./} # Remove the dot, e.g., 12.1 -> 121
-	echo "Creating virtual environment '3DGETD' with Python 3.12, numpy, pillow, PySide6, and torch (cuda enabled)..."
+	echo "Creating virtual environment '3DGETD' with Python $PYTHON_VERSION, numpy, pillow, PySide6==6.8.0.2, and torch (cuda enabled) from https://download.pytorch.org/whl/cu$CUDA_VERSION"
 	python3 -m venv 3DGETD
 	source 3DGETD/bin/activate
 	pip install PySide6==6.8.0.2
