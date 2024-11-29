@@ -93,7 +93,6 @@ if compare_versions "$CUDA_VERSION" "12.4"; then
     CUDA_VERSION=12.1
 elif ! compare_versions "$CUDA_VERSION" "11.8" && \
 	 ! compare_version "$nvdiasmi" "12.4" ; then
-	if  
     echo "Detected CUDA < 11.8 but GPU drivers support pytorch-cuda 12.1."
 	while true; do
 		read -p "Would you like to continue? y/n: " opt
