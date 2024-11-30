@@ -17,7 +17,7 @@
 
 ## 🔧  **Installation Overview**
 
-This project includes shell scripts to automate the creation and setup of the required virtual environment using Conda. These scripts ensure compatibility with the installed CUDA version and use Python 3.12 as the base interpreter.
+This project includes shell scripts to automate the creation and setup of the required virtual environment using Conda. These scripts ensure compatibility with the installed Python version, CUDA version and PyTorch version.
 #### 📋 **Prerequisites**
 Before cloning and installing the repository, please ensure the following are installed and available in your system's `PATH`:
 - **Conda**: For environment creation and package management.

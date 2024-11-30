@@ -132,6 +132,7 @@ if [[ "$package_manager" == "conda" ]]; then
 	fi
 
 	echo "Environment '3DGETD' setup completed successfully!"
+	conda deactivate
 
 elif [[ "$package_manager" == "pip" ]]; then
 
@@ -145,7 +146,11 @@ elif [[ "$package_manager" == "pip" ]]; then
 	CUDA_VERSION=${CUDA_VERSION//./} # Remove the dot, e.g., 12.1 -> 121
 	echo "Creating virtual environment '3DGETD' with Python $PYTHON_VERSION, numpy, pillow, PySide6==6.8.0.2, and torch (cuda enabled) from https://download.pytorch.org/whl/cu$CUDA_VERSION"
 	python3 -m venv 3DGETD
-	source 3DGETD/bin/activate
+	if [[ $OS="windows" ]]; then
+		source 3DGETD/Scripts/activate
+	else
+		source 3DGETD/bin/activate
+	fi
 	pip install PySide6==6.8.0.2
 	pip install numpy pillow torch --index-url https://download.pytorch.org/whl/cu"$CUDA_VERSION"
 
@@ -155,6 +160,7 @@ elif [[ "$package_manager" == "pip" ]]; then
 	fi
 
 	echo "Environment '3DGETD' setup completed successfully!"
+	deactivate
 fi
 
 # Ensure run scripts is executable
