@@ -39,9 +39,8 @@ elif [[ $package_manager == "pip" && $operating_system == "windows" ]]; then
     source 3DGETD/Scripts/activate
     echo " ✔"
 else
-
     echo "✘"
-    echo "Failed to activate environment."
+    echo "Failed to activate environment.  Have you run setup_3dgetd.sh?"
     sleep 1s
     exit 1
 fi
