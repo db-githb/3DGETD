@@ -146,14 +146,13 @@ elif [[ "$package_manager" == "pip" ]]; then
 	CUDA_VERSION=${CUDA_VERSION//./} # Remove the dot, e.g., 12.1 -> 121
 	echo "Creating virtual environment '3DGETD' with Python $PYTHON_VERSION, numpy, pillow, PySide6==6.8.0.2, and torch (cuda enabled) from https://download.pytorch.org/whl/cu$CUDA_VERSION"
 	python3 -m venv 3DGETD
-	if [[ $OS="windows" ]]; then
+	if [[ $OS == "windows" ]]; then
 		source 3DGETD/Scripts/activate
 	else
 		source 3DGETD/bin/activate
 	fi
 	pip install PySide6==6.8.0.2
 	pip install numpy pillow torch --index-url https://download.pytorch.org/whl/cu"$CUDA_VERSION"
-
 	if [ $? -ne 0 ]; then
 	    echo "Failed to create environment or install packages."
 	    exit 1
