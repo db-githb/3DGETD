@@ -1,7 +1,7 @@
 <h1 align="center">3D GET-D:</h1>
 <h1 align="center">3D Gaussian Editor for Test Data</h1>
 
-
+![gaussian](readme_images/3dgetd_demo.png)
 
 **3D GET-D** is a tool designed to create cameras and 3D gaussians for testing the forward/rendering pass of 3D Gaussian Splatting applications in Nerfstudio.
 
@@ -12,6 +12,8 @@
 **Flexible Camera Configuration**: Easily define and adjust the number of cameras, along with their position and rotation parameters.
 
 **Customizable 3D Gaussians**: Configure the number of 3D Gaussians and customize their base color, position, rotation, and scale for precise control over the 3D scene.
+
+![features](readme_images/features.png)
 
 ---
 
@@ -25,9 +27,9 @@ Before cloning and installing the repository, please ensure the following are in
 
 The tool has been tested with Python 3.12, 3.10 and CUDA 12.1, 11.8. If you're using different versions of Python or CUDA, please ensure that all required packages are compatible with your environment.
 
-**Windows Users**: All the steps in the following guide must be run inside a `bash` shell (e.g. Git Bash, WSL, or another Bash environment)
+**Windows Users**: All the steps in the following guide must be run inside a `bash` shell (e.g. Git Bash, WSL, or another Bash environment).  If using COnda, ensure that Conda is added to the PATH variable. Alternatively, use the Anaconda Terminal for setup to avoid PATH configuration issues.
 
-**Linux Users**: You can run the commands directly in your terminal
+**Linux Users**: You can run the commands directly in your terminal.
 
 #### 📝 **Steps to Set Up Environment**
 
@@ -39,7 +41,7 @@ The tool has been tested with Python 3.12, 3.10 and CUDA 12.1, 11.8. If you're u
     ```bash
     chmod +x setup_script.sh
     ```
-3. **Run `setup_script.sh`**
+3. **Run `setup_3dgetd.sh`**
     ```bash
     ./setup_script.sh
     ```
@@ -95,19 +97,6 @@ These required subdirectories and files are created by the tool.
 ## 🌟 **Contributions and feedback are highly encouraged!**
 Feel free to submit pull requests or open issues for feature requests and bug reports.
 
-## 📜 **Citation**
-
-If you found this tool useful in your research, please cite it!
-
-```bibtex
-@misc{3DGETD,
-  author = {Bowness, Damian},
-  title = {3D GET-D: 3D Gaussian Editor for Test Data},
-  year = {2024},
-  publisher = {GitHub},
-  url = {https://github.com/db-githb/3D_GET-D},
-}
-```
 ---
 ## 📜 **License**
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
