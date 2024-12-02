@@ -27,7 +27,7 @@ Before cloning and installing the repository, please ensure the following are in
 
 The tool has been tested with Python 3.12, 3.10 and CUDA 12.1, 11.8. If you're using different versions of Python or CUDA, please ensure that all required packages are compatible with your environment.
 
-**Windows Users**: All the steps in the following guide must be run inside a `bash` shell (e.g. Git Bash, WSL, or another Bash environment).  If using COnda, ensure that Conda is added to the PATH variable. Alternatively, use the Anaconda Terminal for setup to avoid PATH configuration issues.
+**Windows Users**: All the steps in the following guide must be run inside a `bash` shell (e.g. Git Bash, WSL, or another Bash environment).  If using Conda, ensure that Conda is added to the PATH variable. Alternatively, use the Anaconda Terminal for setup to avoid PATH configuration issues.
 
 **Linux Users**: You can run the commands directly in your terminal.
 
