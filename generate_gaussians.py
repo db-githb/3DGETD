@@ -137,7 +137,7 @@ class GaussianGenerator(QWidget):
         if os.path.exists(checkpoint_file):
             checkpoint = torch.load(checkpoint_file)
             numExistingGauss = checkpoint["pipeline"]["_model.gauss_params.means"].shape[0]
-            self.num_gaussians_entry.setText(str(numExistingGauss))
+            #self.num_gaussians_entry.setText(str(numExistingGauss))
         else:
             checkpoint = None
 
